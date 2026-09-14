@@ -1,0 +1,7 @@
+# 公開リポジトリ（GitHub Pages）なので追跡しないもの
+# Cowork の草案（業務システムの記述を含む）
+docs/draft/
+# 手元だけのメモ・子どもの名前などの設定
+docs/local/
+
+.DS_Store

@@ -167,7 +167,7 @@
 
 **配信とオフライン**（`docs/hosting.md` をもとに決めたこと）
 
-- `.github/workflows/pages.yml`（hosting.md のもの）で、`main` への push のたびに `site/` を GitHub Pages に上げる。`site/.nojekyll` を空で置く。
+- `.github/workflows/pages.yml`（hosting.md のものを、2026-09-14 時点の最新の版＝checkout v7・configure-pages v6・upload-pages-artifact v5・deploy-pages v5 に上げた）で、`main` への push のたびに `site/` を GitHub Pages に上げる。`site/.nojekyll` を空で置く。
 - 各 HTML に `<meta name="robots" content="noindex">`。
 - `site/manifest.webmanifest`（`display: standalone`・`start_url: ./`・`scope: ./`）と、ホーム画面のアイコン（180px の PNG）を置く。ホーム画面のアイコンは**いつも表から開く**。
 - `site/sw.js`（サービスワーカー）: キャッシュ名に版（`kids-v1` など）を付け、`site/` の全ファイルを先読みし、キャッシュを先に使う。**更新するたびに版を上げる**（上げ忘れると iPad が古いまま）。

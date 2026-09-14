@@ -1,0 +1,14 @@
+{
+  "name": "なぞって あいうえお",
+  "short_name": "あいうえお",
+  "lang": "ja",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#F1F4EF",
+  "theme_color": "#F1F4EF",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

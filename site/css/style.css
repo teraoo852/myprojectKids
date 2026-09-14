@@ -1,0 +1,219 @@
+/* なぞって あいうえお — 見た目（spec §3〜§8・§13）。iPad Air 2（1024×768・Safari 15）横向き */
+
+@font-face { font-family: "Zen Maru Gothic"; font-weight: 700; font-display: swap; src: url("../fonts/zen-maru-gothic-700.woff2") format("woff2"); }
+@font-face { font-family: "Zen Maru Gothic"; font-weight: 900; font-display: swap; src: url("../fonts/zen-maru-gothic-900.woff2") format("woff2"); }
+
+:root {
+  color-scheme: light;
+  --paper: #F1F4EF; --plate: #FFFFFF; --art: #FFFFFF;
+  --ink: #25313A; --ink-soft: #56656F; --rule: #DCE3DB;
+  --accent: #D9503A; --accent-soft: #F7DCD6;
+  --shadow: 0 1px 0 rgba(37, 49, 58, .06), 0 6px 18px -12px rgba(37, 49, 58, .45);
+  --font: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", sans-serif;
+  --adult: "Hiragino Sans", "ヒラギノ角ゴシック", sans-serif;
+}
+
+/* 行の色（spec §8）: --hue＝濃（字・なぞり枠の地）、--tint＝淡（マスの地）。
+   濃は ①淡い地 ②白い字 ③なぞった線 #25313A のどれとも比 3:1 以上（tests/check.mjs で確かめる） */
+[data-row="1"]  { --hue: #D8536D; --tint: #FAEBEE; }
+[data-row="2"]  { --hue: #648C45; --tint: #ECF3E5; }
+[data-row="3"]  { --hue: #3E87B8; --tint: #E8F1F7; }
+[data-row="4"]  { --hue: #A57A1C; --tint: #FAF1DE; }
+[data-row="5"]  { --hue: #8876B7; --tint: #EFECF7; }
+[data-row="6"]  { --hue: #D55938; --tint: #FAEBE5; }
+[data-row="7"]  { --hue: #468D80; --tint: #E6F3F0; }
+[data-row="8"]  { --hue: #888444; --tint: #F4F3E3; }
+[data-row="9"]  { --hue: #C06095; --tint: #F7EBF2; }
+[data-row="10"] { --hue: #6C80B2; --tint: #EAEEF6; }
+
+/* ── 土台 ── */
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body {
+  margin: 0; height: 100%;
+  background: var(--paper); color: var(--ink);
+  font-family: var(--font); font-weight: 700;
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none; user-select: none;   /* 長押しで字が選ばれない */
+  -webkit-touch-callout: none;                     /* 長押しのメニューを出さない */
+  touch-action: manipulation;                      /* ダブルタップで拡大しない */
+  overscroll-behavior: none;
+}
+body { overflow: hidden; }
+p { margin: 0; }
+button {
+  font: inherit; color: inherit; background: none; border: 0; padding: 0; margin: 0;
+  cursor: pointer; touch-action: manipulation;
+  transition: transform .1s ease;
+}
+button:focus { outline: none; }
+button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+/* 押したら 0.3秒以内に見た目で返す（spec §8・R3） */
+button:active { transform: scale(.95); }
+
+.ico { display: inline-block; width: 32px; height: 32px; flex: none; }
+.ico svg, .pic svg, .maru svg { display: block; width: 100%; height: 100%; }
+.nt { font-size: 24px; color: var(--ink-soft); line-height: 1; }
+
+/* ── 読み込み中・失敗・縦向き（spec §8） ── */
+.boot, .fail, .rotate {
+  position: fixed; top: 0; right: 0; bottom: 0; left: 0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 20px;
+  background: var(--paper); font-size: 28px; text-align: center; line-height: 1.6;
+}
+.boot { color: var(--ink-soft); }
+.fail { z-index: 5; }
+.fail svg { width: 160px; height: 160px; }
+/* JS が来なければ 6秒後に出る（JS が動けば hidden で消える） */
+.fail.late { visibility: hidden; animation: late 0s linear 6s forwards; }
+@keyframes late { to { visibility: visible; } }
+.rotate { display: none; z-index: 10; }
+.rotate svg { width: 200px; height: 200px; }
+@media (orientation: portrait) { .rotate { display: flex; } }
+
+/* ── 画面の枠 ── */
+.app { position: fixed; top: 0; right: 0; bottom: 0; left: 0; padding: 16px; }
+.screen { height: 100%; }
+
+/* ── 画面1 ひょう（spec §3） ── */
+.chart { display: flex; flex-direction: column; gap: 12px; }
+.head { display: flex; align-items: center; gap: 24px; min-height: 56px; }
+.title { flex: 1; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: .04em; }
+.count { font-size: 24px; white-space: nowrap; }
+.count .mk, .count b { color: var(--accent); }
+.count b { font-size: 28px; }
+.help {
+  position: relative; width: 56px; height: 56px; border-radius: 50%;
+  background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 28px; color: var(--ink-soft);
+}
+.badge {
+  position: absolute; top: -6px; right: -6px; min-width: 26px; height: 26px; border-radius: 13px;
+  background: var(--accent); color: #FFFFFF; font-size: 18px; line-height: 26px;
+}
+/* 10列×5段・右から あ行（縦書きの五十音表） */
+.grid {
+  flex: 1; min-height: 0;
+  display: grid; grid-template-columns: repeat(10, 1fr); grid-template-rows: repeat(5, 1fr);
+  grid-auto-flow: column; direction: rtl; gap: 8px;
+}
+.cell {
+  direction: ltr; position: relative; min-width: 0; min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 16px; background: var(--tint); border: 2px solid var(--rule); box-shadow: var(--shadow);
+}
+.cell .ch { font-size: 52px; line-height: 1; color: var(--hue); }
+.cell .mk { position: absolute; top: 4px; right: 6px; font-size: 22px; line-height: 1; color: var(--accent); }
+.cell.empty { background: transparent; border-style: dashed; box-shadow: none; }
+.cell.empty .ch { color: var(--ink-soft); opacity: .35; }
+
+/* ── 画面2〜4 もじページの枠（spec §4） ── */
+.detail { display: flex; gap: 24px; }
+.side { width: 240px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+.back {
+  display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px;
+  border-radius: 14px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 22px; color: var(--ink-soft);
+}
+.big {
+  position: relative; height: 200px; flex: none;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 24px; background: var(--tint); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 160px; font-weight: 900; line-height: 1; color: var(--hue);
+}
+.big .nt { position: absolute; right: 12px; bottom: 10px; color: var(--hue); }
+.gyou { font-size: 20px; color: var(--ink-soft); text-align: center; }
+.tabs { display: flex; flex-direction: column; gap: 10px; }
+.tab {
+  display: flex; align-items: center; gap: 6px; height: 64px; padding: 0 10px;
+  border-radius: 14px; background: var(--plate); border: 2px solid var(--rule);
+  font-size: 24px; color: var(--ink-soft); text-align: left; white-space: nowrap;
+}
+.tab .tri { width: 16px; font-size: 16px; visibility: hidden; }
+.tab[aria-selected="true"] { background: var(--hue); border-color: var(--hue); color: #FFFFFF; }
+.tab[aria-selected="true"] .tri { visibility: visible; }
+
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.panel { flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; gap: 16px; }
+
+/* を・ん の説明（押すと読む・R15） */
+.note {
+  display: block; width: 100%; padding: 16px 20px;
+  border-radius: 20px; background: var(--plate); border: 2px dashed var(--rule);
+  font-size: 24px; line-height: 1.6; color: var(--ink); text-align: center;
+}
+.note b { color: var(--hue); font-weight: 900; text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px; }
+.note .nt { margin-left: 8px; }
+
+/* 単語の中の その字（色＋太い下線・spec §5） */
+.word { font-size: 40px; letter-spacing: .06em; color: var(--ink); }
+.word em { font-style: normal; color: var(--hue); text-decoration: underline; text-decoration-thickness: 4px; text-underline-offset: 8px; }
+
+/* ── 画面2 え と ことば（spec §5） ── */
+.cards { display: flex; justify-content: center; gap: 20px; }
+.card {
+  flex: 0 1 340px; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px;
+  border-radius: 24px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+}
+.pic {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; max-width: 300px; aspect-ratio: 1 / 1; padding: 7%;
+  border-radius: 18px; background: var(--art);
+}
+.pic .none { font-size: 120px; color: var(--ink-soft); }
+
+/* ── 画面3 ことば（spec §6） ── */
+.words { display: flex; flex-direction: column; gap: 16px; }
+.wrow {
+  display: flex; align-items: center; justify-content: center; gap: 16px; min-height: 120px; padding: 12px 24px;
+  border-radius: 24px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+}
+.wrow .word { font-size: 64px; }
+
+/* ── 画面4 なぞる（spec §7） ── */
+.trace { display: flex; align-items: center; justify-content: center; gap: 24px; height: 100%; }
+.box {
+  position: relative; flex: none;
+  width: min(520px, calc(100vh - 40px), calc(100vw - 490px));
+  height: min(520px, calc(100vh - 40px), calc(100vw - 490px));
+  border-radius: 24px; overflow: hidden; background: var(--hue); box-shadow: var(--shadow);
+  touch-action: none;
+}
+.box canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; }
+.maru {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; padding: 11%;
+  background: rgba(255, 255, 255, .55); color: var(--accent);
+  opacity: 0; transition: opacity .2s ease; pointer-events: none;
+}
+.maru.on { opacity: 1; }
+.maru .hana-bg { fill: none; }
+.tools { width: 150px; flex: none; display: flex; flex-direction: column; align-items: stretch; gap: 32px; }
+.btn {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 18px; box-shadow: var(--shadow); font-size: 24px;
+}
+.btn.done { height: 104px; background: var(--accent); color: #FFFFFF; }
+.btn.done .ico { width: 48px; height: 48px; }
+.btn.done .hana-bg { fill: var(--accent); }
+.btn.erase { height: 64px; flex-direction: row; gap: 6px; background: var(--plate); border: 2px solid var(--rule); color: var(--ink-soft); font-size: 20px; }
+.btn.erase .ico { width: 36px; height: 36px; }
+.verdict { min-height: 100px; font-size: 24px; line-height: 1.4; text-align: center; color: var(--ink-soft); }
+.verdict.good { color: var(--accent); font-weight: 900; }
+
+/* ── 画面5 おとなの ひとへ（spec §13・おとな向けなので 16px） ── */
+.adult {
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  font-family: var(--adult); font-weight: 400; font-size: 16px; line-height: 1.8;
+}
+.adult .inner { max-width: 760px; margin: 0 auto; padding-bottom: 40px; }
+.adult .back { display: inline-flex; font-family: var(--font); font-weight: 700; }
+.adult h2 { margin: 24px 0 4px; font-family: var(--font); font-weight: 700; font-size: 22px; }
+.adult ul { margin: 0; padding-left: 1.4em; }
+.warn { margin: 16px 0 0; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
+
+/* 動きを減らす設定のとき: 縮む・ふわっと出る をやめ、押したら少し暗くするだけにする */
+@media (prefers-reduced-motion: reduce) {
+  button, .maru { transition: none; }
+  button:active { transform: none; filter: brightness(.9); }
+}

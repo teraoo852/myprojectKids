@@ -20,8 +20,9 @@
 
 - **スタック**: 静的 HTML＋CSS＋JS のみ（iPadOS 15 の Safari で動く書き方）——**DB は初版では置かない**（要るときは §1 の「できること」に理由を書いてから）
 - **置き場**: `site/`（配信するもの）・`docs/`（仕様・記録）・`tests/`（機械チェック）・`.github/workflows/`（配信）
-- **動かし方（1コマンド）**: `python3 -m http.server 8080 -d site`（手元で見る）。配信は `main` に push すると GitHub Actions が Pages に上げる
-- **確認の仕方**: Mac の Safari で `http://localhost:8080/`。iPad で手元の版を見るなら Safari で `http://<Mac の名前>.local:8080/`（http なのでオフラインの仕組みは動かない）。配信した版は iPad のホーム画面のアイコンから
+- **動かし方（1コマンド）**: リポジトリの直下で `python3 -m http.server 8080`（手元で見る）。配信は `main` に push すると GitHub Actions が Pages に上げる（リポジトリを公開にしたときから）
+- **確認の仕方**: Mac の Safari で `http://localhost:8080/site/`。iPad で手元の版を見るなら `http://<Mac の名前>.local:8080/site/`（http なのでオフラインの仕組みは動かない）。配信した版は iPad のホーム画面のアイコンから
+- **機械チェック**: `node tests/check.mjs`（NG が0件になるまで直す）。なぞりの数値は `http://localhost:8080/tests/trace-measure.html`
 
 ## 3. 進め方（myprojectP から持ち込む「分け方」だけ）
 

@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="あいうえお">
+<meta name="theme-color" content="#F1F4EF">
+<title>なぞって あいうえお</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- 読み込み中と失敗（spec §8）。JS が動けば両方消える。JS が来なければ 6秒後に失敗の案内が出る -->
+<div id="boot" class="boot">ひらいています…</div>
+<div id="fail" class="fail late" role="alert">
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    <circle cx="32" cy="32" r="27" fill="#F6DE72"/>
+    <path d="M17 21l10 4M47 21l-10 4" stroke="#3E3A36" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="23" cy="31" r="3.2" fill="#3E3A36"/>
+    <circle cx="41" cy="31" r="3.2" fill="#3E3A36"/>
+    <path d="M22 47c6-6 14-6 20 0" fill="none" stroke="#3E3A36" stroke-width="3" stroke-linecap="round"/>
+  </svg>
+  <p>うまく ひらけませんでした。<br>おうちの ひとに いってね</p>
+</div>
+
+<!-- 縦向きのとき（spec §8・R7） -->
+<div class="rotate">
+  <svg viewBox="0 0 64 64" aria-hidden="true">
+    <rect x="5" y="14" width="22" height="34" rx="4" fill="none" stroke="#9AA6AD" stroke-width="3"/>
+    <rect x="27" y="33" width="33" height="22" rx="4" fill="#FFFFFF" stroke="#25313A" stroke-width="3.4"/>
+    <path d="M20 8c12-5 27 1 32 16" fill="none" stroke="#D9503A" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M45 20l7 5 3-8" fill="none" stroke="#D9503A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <p>よこに してね</p>
+</div>
+
+<div id="app" class="app" hidden>
+
+  <!-- 画面1 ひょう（spec §3） -->
+  <section id="chart" class="screen chart" hidden>
+    <header class="head">
+      <h1 class="title">なぞって あいうえお</h1>
+      <p class="count"><span class="mk" aria-hidden="true">◎</span> はなまる <b id="stars">0</b> / <span id="total">46</span></p>
+      <button id="help" class="help" aria-label="おとなの ひとへ">？<span id="helpBadge" class="badge" hidden>！</span></button>
+    </header>
+    <div id="grid" class="grid"></div>
+  </section>
+
+  <!-- 画面2〜4 もじページ（spec §4〜§7） -->
+  <section id="detail" class="screen detail" hidden>
+    <div class="side">
+      <button id="back" class="back"><span class="ico" data-ui="table"></span>もどる</button>
+      <button id="bigchar" class="big" aria-label="よみかたを きく"><span id="bigText"></span><span class="nt" aria-hidden="true">♪</span></button>
+      <p id="gyou" class="gyou"></p>
+      <div class="tabs" role="tablist">
+        <button id="tab0" class="tab" role="tab" aria-selected="true"><span class="tri" aria-hidden="true">▶</span><span class="ico" data-ui="frame"></span>え と ことば</button>
+        <button id="tab1" class="tab" role="tab" aria-selected="false"><span class="tri" aria-hidden="true">▶</span><span class="ico" data-ui="card"></span>ことば</button>
+        <button id="tab2" class="tab" role="tab" aria-selected="false"><span class="tri" aria-hidden="true">▶</span><span class="ico" data-ui="finger"></span>なぞる</button>
+      </div>
+    </div>
+    <div class="main">
+      <div id="p0" class="panel" role="tabpanel"></div>
+      <div id="p1" class="panel" role="tabpanel" hidden></div>
+      <div id="p2" class="panel" role="tabpanel" hidden>
+        <div class="trace">
+          <div id="box" class="box">
+            <canvas id="guide"></canvas>
+            <canvas id="ink"></canvas>
+            <div id="maru" class="maru" data-ui="hanamaru" aria-hidden="true"></div>
+          </div>
+          <div class="tools">
+            <button id="check" class="btn done"><span class="ico" data-ui="hanamaru"></span>できた！</button>
+            <p id="verdict" class="verdict" aria-live="polite"></p>
+            <button id="clear" class="btn erase"><span class="ico" data-icon="keshigomu"></span>けす</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 画面5 おとなの ひとへ（spec §13） -->
+  <section id="otona" class="screen adult" hidden>
+    <div class="inner">
+      <button id="back2" class="back"><span class="ico" data-ui="table"></span>もどる</button>
+      <div id="warns"></div>
+
+      <h2>つかいかた</h2>
+      <ul>
+        <li>表の字を押すと、その字のページが開きます。</li>
+        <li>「え と ことば」: 絵と単語。押すと読み上げます（下の子は ここだけで遊べます）。</li>
+        <li>「ことば」: 絵なしで単語を読みます。</li>
+        <li>「なぞる」: 白い字を指でなぞって「できた！」。はなまるが取れると、表の字に ◎ が付きます。</li>
+      </ul>
+
+      <h2>ひらきかた</h2>
+      <ul>
+        <li><strong>ホーム画面のアイコンから開いてください。</strong>Safari から開くと、はなまるの記録が別になり、しばらく開かないと消されることがあります。</li>
+        <li>ホーム画面に追加するのは、<strong>表を開いているとき</strong>にしてください（Safari の共有ボタン › ホーム画面に追加）。</li>
+        <li>1度開けば、ネットにつながっていなくても開けます。</li>
+      </ul>
+
+      <h2>はなまるの記録</h2>
+      <ul>
+        <li>この iPad だけに覚えます（2人で共有です）。</li>
+        <li>消したいときは、ホーム画面のアイコンを削除して、追加し直してください。</li>
+      </ul>
+
+      <h2>こどもが つかうとき</h2>
+      <ul>
+        <li>画面の向きのロック（コントロールセンター）で、横に固定できます。</li>
+        <li>アクセスガイド（設定 › アクセシビリティ › アクセスガイド）を使うと、アプリの外に出なくなります。</li>
+      </ul>
+
+      <h2>あたらしい版</h2>
+      <ul>
+        <li>アプリを閉じて開き直すと入ります。入らないときは、もう一度 閉じて開いてください。</li>
+      </ul>
+    </div>
+  </section>
+</div>
+
+<script src="js/data.js"></script>
+<script src="js/icons.js"></script>
+<script src="js/trace.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

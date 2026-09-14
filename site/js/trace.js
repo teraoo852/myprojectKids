@@ -8,7 +8,7 @@ KIDS.TRACE = (function () {
   'use strict';
   var S = 600;              // 判定に使う枠の大きさ（内部の px）
   var TOL = 26;             // 許容範囲: 字の本体の外へ この幅まで
-  var LINE = 30;            // なぞる線の太さ（仮・R24: tests/trace-measure で測って決める）
+  var LINE = 56;            // なぞる線の太さ（R24: tests/trace-measure で測って決めた。字の中心線で全字 76% 以上）
   var GOOD = { coverage: 0.55, precision: 0.45 };   // はなまる
   var NEAR = 0.30;                                   // もうすこし
   var Y = S / 2 + S * 0.02;

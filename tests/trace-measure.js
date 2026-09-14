@@ -5,7 +5,7 @@
   'use strict';
   const T = KIDS.TRACE, S = T.S;
   const chars = KIDS.ROWS.flatMap((r) => r.chars).filter(Boolean).map((c) => c[0]);
-  const WIDTHS = [30, 36, 40, 44, 48, 52];
+  const WIDTHS = [30, 40, 48, 52, 56, 60];
   const TARGET = 0.70;
 
   try { await document.fonts.load(T.font(), chars.join('')); } catch (e) { /* 下で知らせる */ }

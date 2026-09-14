@@ -208,7 +208,7 @@ button:active { transform: scale(.95); }
 }
 .adult .inner { max-width: 760px; margin: 0 auto; padding-bottom: 40px; }
 .adult .back { display: inline-flex; font-family: var(--font); font-weight: 700; }
-.adult h2 { margin: 24px 0 4px; font-family: var(--font); font-weight: 700; font-size: 22px; }
+.adult h2 { margin: 24px 0 4px; font-weight: 700; font-size: 22px; }
 .adult ul { margin: 0; padding-left: 1.4em; }
 .warn { margin: 16px 0 0; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
 

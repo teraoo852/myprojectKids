@@ -4,4 +4,9 @@ docs/draft/
 # 手元だけのメモ・子どもの名前などの設定
 docs/local/
 
+# フォントの元（TTF・大きい）。site/fonts/ には小さくした woff2 だけを置く
+fonts-src/
+# フォントを小さくする道具（fonttools）
+.venv/
+
 .DS_Store

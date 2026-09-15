@@ -1,4 +1,4 @@
-/* なぞって あいうえお — 画面の動き（spec §3〜§8・§13） */
+/* なぞって あいうえお — 画面の動き（spec §3〜§8・§13〜§17） */
 (function () {
   'use strict';
   var $ = function (s) { return document.querySelector(s); };
@@ -15,7 +15,9 @@
   }
   window.addEventListener('error', function (e) { fail(e.error || e.message); });
   window.addEventListener('unhandledrejection', function (e) { fail(e.reason); });
-  if (!K.ROWS || !K.ICONS || !K.UI || !K.TRACE) { fail('data.js・icons.js・trace.js のどれかが読めない'); return; }
+  if (!K.ROWS || !K.ICONS || !K.UI || !K.TRACE || !K.SAGASU || !K.TSUMIKI || !K.BLOCKS) {
+    fail('data.js・icons.js・trace.js のどれかが読めない'); return;
+  }
 
   /* ── おとなに知らせること（画面5・「？」の ！ 印） ── */
   var WARN = { voice: false, store: false };
@@ -99,33 +101,49 @@
       byKey[c[1]] = { c: c[0], k: c[1], w: c[2], gyou: r.gyou, row: r.row };
     });
   });
+  function countStars() {
+    var s = store.get(), n = 0;
+    Object.keys(byKey).forEach(function (k) { if (s[k]) n++; });
+    return n;
+  }
 
-  /* ── 画面の切り替えと URL（spec §4） ── */
-  var SCREENS = ['chart', 'detail', 'otona', 'futari'];
+  /* ── 画面の切り替えと URL（spec §4・§17） ──
+     URL: なし＝メニュー／#hyou＝表／#ka など＝字のページ／#otona＝画面5／#sagasu＝画面6／#tower＝画面7 */
+  var SCREENS = ['menu', 'chart', 'detail', 'otona', 'sagasu', 'tower'];
   var cur = null;
   function show(name) {
     SCREENS.forEach(function (id) { $('#' + id).hidden = id !== name; });
   }
   function route() {
     var h = decodeURIComponent(location.hash.slice(1));
-    if (h === 'otona') showHelp();
-    else if (h === 'futari') showFutari();
+    stopTrace(); stopDuo();
+    if (h === 'hyou') showChart();
+    else if (h === 'otona') showHelp();
+    else if (h === 'sagasu') showSagasu();
+    else if (h === 'tower') showTower();
     else if (h && byKey[h]) openChar(h);
-    else showChart();
+    else showMenu();
   }
   function go(hash) {
     if (location.hash !== '#' + hash) history.pushState(null, '', '#' + hash);
     route();
   }
-  /* もどる は いつも画面1（履歴を1つ戻すのではない・R13） */
-  function home() {
-    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+  /* もどる は ひとつ上の画面へ（履歴を1つ戻すのではない・R13・§17）: 字のページ→表、それ以外→メニュー */
+  function up(hash) {
+    history.replaceState(null, '', hash ? '#' + hash : location.pathname + location.search);
     route();
+  }
+
+  /* ── 画面0 メニュー（spec §17） ── */
+  function showMenu() {
+    $('#menuStars').textContent = countStars();
+    $('#menuTotal').textContent = total;
+    renderWarns();
+    show('menu');
   }
 
   /* ── 画面1 ひょう（spec §3） ── */
   function showChart() {
-    stopTrace();
     var stars = store.get(), n = 0, html = '';
     K.ROWS.forEach(function (r) {
       r.chars.forEach(function (c) {
@@ -147,7 +165,6 @@
 
   /* ── 画面5 おとなの ひとへ（spec §13） ── */
   function showHelp() {
-    stopTrace();
     renderWarns();
     show('otona');
     $('#otona').scrollTop = 0;
@@ -270,14 +287,14 @@
     ictx.beginPath(); ictx.moveTo(last[0], last[1]); ictx.lineTo(p[0], p[1]); ictx.stroke();
     last = p;
   });
-  function up(e) { if (e.pointerId === active) active = null; }
-  box.addEventListener('pointerup', up);
-  box.addEventListener('pointercancel', up);
+  function up1(e) { if (e.pointerId === active) active = null; }
+  box.addEventListener('pointerup', up1);
+  box.addEventListener('pointercancel', up1);
   /* 枠の中では ページが動かない・拡大しない */
   box.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
   box.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
 
-  /* ── 画面6 ものさがし（spec §14・§15） ── */
+  /* ── ふたりで あそぶ 画面の共通（spec §14） ── */
 
   /* 指ごとに受け付ける「押した」: 2人が同時に押しても両方効く（§14 の決まり4）。
      押した指が そのまま同じ物の上で離れたときだけ fn を呼ぶ */
@@ -308,18 +325,26 @@
   }
   function applyPlace(p) {
     p = p || getPlace();
-    $('#futari').setAttribute('data-place', p);
+    var duos = document.querySelectorAll('.duo');
+    for (var i = 0; i < duos.length; i++) duos[i].setAttribute('data-place', p);
     $('#placeShort').setAttribute('aria-pressed', p === 'short' ? 'true' : 'false');
     $('#placeLong').setAttribute('aria-pressed', p === 'long' ? 'true' : 'false');
   }
-
-  var SG = { set: [], ans: null, found: 0, hint: 0, busy: false, timer: 0 };
+  /* 画面を出るとき: 待っている動きを止める（数えるのは その回だけ） */
+  function stopDuo() {
+    clearTimeout(SG.timer);
+    clearTimeout(TW.pushTimer); clearTimeout(TW.stampTimer);
+    twDragEnd();
+  }
   function shuffle(a) {
     for (var i = a.length - 1; i > 0; i--) {
       var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
     }
     return a;
   }
+
+  /* ── 画面6 ものさがし（spec §15） ── */
+  var SG = { set: [], ans: null, found: 0, hint: 0, busy: false, timer: 0 };
   function setHintPic(ui, icon) {
     var h = $('#sgHintPic');
     if (ui) { h.setAttribute('data-ui', ui); h.removeAttribute('data-icon'); }
@@ -342,17 +367,15 @@
     fillIcons($('#sgPics'));
     $('#sgStamp').classList.remove('on');
   }
-  function showFutari() {
-    stopTrace();
-    clearTimeout(SG.timer);
+  function showSagasu() {
     applyPlace();
-    SG.found = 0;                                   // 数えるのは その回だけ（§14）
+    SG.found = 0;
     $('#sgFound').textContent = '0';
     sgRound();
-    show('futari');
+    show('sagasu');
   }
-  onTap($('#futari'), '#sgWord', function () { speak(SG.ans[0]); });
-  onTap($('#futari'), '#sgHint', function () {
+  onTap($('#sagasu'), '#sgWord', function () { speak(SG.ans[0]); });
+  onTap($('#sagasu'), '#sgHint', function () {
     SG.hint++;
     if (SG.hint === 1) setHintPic(null, SG.ans[1]);                       // 1回目: 兄の側に こたえの絵
     else {                                                                // 2回目: 弟の側の こたえの絵に枠
@@ -360,7 +383,7 @@
       if (t) t.classList.add('glow');
     }
   });
-  onTap($('#futari'), '.sg-pic', function (el) {
+  onTap($('#sagasu'), '.sg-pic', function (el) {
     if (SG.busy) return;
     var name = el.getAttribute('data-say');
     if (el.getAttribute('data-k') !== SG.ans[1]) { speak(name); return; }  // 外れても否定しない: 名前を言うだけ
@@ -372,7 +395,141 @@
     speak(name + '！ みつけた！');
     SG.timer = setTimeout(sgRound, 1500);
   });
-  onTap($('#futari'), '#sgBack', home);
+  onTap($('#sagasu'), '#sgBack', function () { up(''); });
+
+  /* ── 画面7 いっしょに タワー（spec §16） ── */
+  var TW_MAX = 7, TW_GOAL = 6, TRAY_MAX = 3;
+  var TW = { cols: [[], [], []], tray: [], n: 0, busy: false, done: false, sel: -1, drag: null, pushTimer: 0, stampTimer: 0 };
+  var ghost = $('#twGhost');
+  function blockSvg(b) {
+    return '<svg viewBox="0 0 112 48" aria-hidden="true" focusable="false">' + K.BLOCKS[b.shape].replace(/COLOR/g, b.color) + '</svg>';
+  }
+  function twHigh() { return Math.max(TW.cols[0].length, TW.cols[1].length, TW.cols[2].length); }
+  function twRender() {
+    var cols = document.querySelectorAll('.tw-col');
+    TW.cols.forEach(function (c, i) {
+      cols[i].innerHTML = c.map(function (b) { return '<span class="tw-blk">' + blockSvg(b) + '</span>'; }).join('');
+      cols[i].classList.toggle('pick', TW.sel >= 0 && c.length < TW_MAX);
+    });
+    $('#twTrayBlocks').innerHTML = TW.tray.map(function (b, i) {
+      return '<button class="tw-blk tw-take' + (i === TW.sel ? ' sel' : '') + '" data-i="' + i + '" aria-label="' + b.name + '">' + blockSvg(b) + '</button>';
+    }).join('');
+    var h = twHigh();
+    $('#twHigh').textContent = h;
+    $('#twFlag').classList.toggle('on', h >= TW_GOAL);
+  }
+  function twReset() {
+    clearTimeout(TW.pushTimer); clearTimeout(TW.stampTimer);
+    TW.cols = [[], [], []]; TW.tray = []; TW.done = false; TW.sel = -1; TW.busy = false;
+    $('#twAgain').hidden = true;
+    $('#twStamp').classList.remove('on');
+    $('#twTray').classList.remove('full');
+    $('#twDrop').innerHTML = '';
+    twRender();
+  }
+  function showTower() {
+    applyPlace();
+    twReset();
+    show('tower');
+  }
+
+  /* 弟: 押すたびに積み木が1つ、兄の受け皿へ届く（連打しても1回に1つ） */
+  onTap($('#tower'), '#twPush', function () {
+    if (TW.busy) return;
+    if (TW.tray.length >= TRAY_MAX) {                      // 受け皿がいっぱい: 弟を否定せず、兄に頼む
+      var tr = $('#twTray');
+      tr.classList.add('full');
+      setTimeout(function () { tr.classList.remove('full'); }, 800);
+      speak('つみきが いっぱい！ おにいちゃん つんでね');
+      return;
+    }
+    TW.busy = true;
+    var kind = K.TSUMIKI[Math.floor(Math.random() * K.TSUMIKI.length)];
+    var b = { shape: kind[0], name: kind[1], color: K.TSUMIKI_COLORS[TW.n++ % K.TSUMIKI_COLORS.length] };
+    $('#twDrop').innerHTML = '<span class="tw-blk tw-pop">' + blockSvg(b) + '</span>';
+    speak(b.name + '！');
+    TW.pushTimer = setTimeout(function () {
+      $('#twDrop').innerHTML = '';
+      TW.tray.push(b);
+      TW.busy = false;
+      twRender();
+    }, 450);
+  });
+
+  /* 兄: 受け皿の i 番目を c 列に置く（c が -1 や いっぱいの列なら受け皿に残る） */
+  function twPlace(i, c) {
+    var b = TW.tray[i];
+    TW.sel = -1;
+    if (!b || c < 0 || TW.cols[c].length >= TW_MAX) { twRender(); return; }
+    var before = twHigh();
+    TW.tray.splice(i, 1);
+    TW.cols[c].push(b);
+    twRender();
+    var h = twHigh();
+    if (h >= TW_GOAL && !TW.done) {
+      TW.done = true;
+      $('#twStamp').classList.add('on');
+      speak('たかい！ ふたりで つんだね');
+      TW.stampTimer = setTimeout(function () {
+        $('#twStamp').classList.remove('on');
+        $('#twAgain').hidden = false;
+      }, 2000);
+    } else if (h > before) {
+      speak(h + 'だん！');
+    }
+  }
+
+  /* 兄: 受け皿の積み木を指で運んで列に置く。動かさずに離すと「選ぶ」→ 列を押して置く */
+  function colAt(x, y) {
+    var el = document.elementFromPoint(x, y);
+    var col = el && el.closest('.tw-col');
+    return col ? +col.getAttribute('data-col') : -1;
+  }
+  function markOver(c) {
+    var cols = document.querySelectorAll('.tw-col');
+    for (var j = 0; j < cols.length; j++) cols[j].classList.toggle('over', j === c);
+  }
+  function twDragEnd() {
+    TW.drag = null;
+    if (ghost) ghost.hidden = true;
+    markOver(-1);
+  }
+  $('#tower').addEventListener('pointerdown', function (e) {
+    var t = e.target.closest('.tw-take');
+    if (!t || TW.drag) return;
+    TW.drag = { id: e.pointerId, i: +t.getAttribute('data-i'), x: e.clientX, y: e.clientY, moved: false };
+  });
+  document.addEventListener('pointermove', function (e) {
+    var d = TW.drag;
+    if (!d || e.pointerId !== d.id) return;
+    if (!d.moved) {
+      if (Math.abs(e.clientX - d.x) + Math.abs(e.clientY - d.y) < 12) return;   // 少し動くまでは「押しただけ」
+      d.moved = true;
+      ghost.innerHTML = blockSvg(TW.tray[d.i]);
+      ghost.hidden = false;
+      var src = $('#twTrayBlocks').querySelector('[data-i="' + d.i + '"]');
+      if (src) src.classList.add('lift');
+    }
+    /* 運んでいる積み木を指の位置に置く（位置は指といっしょに変わるので、ここだけ JS で置く） */
+    ghost.style.left = e.clientX + 'px';
+    ghost.style.top = e.clientY + 'px';
+    markOver(colAt(e.clientX, e.clientY));
+  });
+  function dragUp(e) {
+    var d = TW.drag;
+    if (!d || e.pointerId !== d.id) return;
+    twDragEnd();
+    if (d.moved) { twPlace(d.i, e.type === 'pointerup' ? colAt(e.clientX, e.clientY) : -1); return; }
+    TW.sel = TW.sel === d.i ? -1 : d.i;                    // 押して離しただけ: 選ぶ（もう一度でやめる）
+    twRender();
+  }
+  document.addEventListener('pointerup', dragUp);
+  document.addEventListener('pointercancel', dragUp);
+  onTap($('#tower'), '.tw-col', function (el) {
+    if (TW.sel >= 0) twPlace(TW.sel, +el.getAttribute('data-col'));
+  });
+  onTap($('#tower'), '#twAgain', twReset);
+  onTap($('#tower'), '#twBack', function () { up(''); });
 
   /* ── 拡大させない・長押しのメニューを出さない（spec §8・R1） ── */
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
@@ -386,13 +543,17 @@
   document.addEventListener('touchstart', function () {}, { passive: true });   // iOS で :active（押した見た目）を効かせる
 
   /* ── つなぐ ── */
+  $('#goHyou').addEventListener('click', function () { go('hyou'); });
+  $('#goSagasu').addEventListener('click', function () { go('sagasu'); });
+  $('#goTower').addEventListener('click', function () { go('tower'); });
+  $('#help').addEventListener('click', function () { go('otona'); });
   $('#grid').addEventListener('click', function (e) {
     var b = e.target.closest('[data-key]');
     if (b) go(b.getAttribute('data-key'));
   });
-  $('#help').addEventListener('click', function () { go('otona'); });
-  $('#back').addEventListener('click', home);
-  $('#back2').addEventListener('click', home);
+  $('#backMenu').addEventListener('click', function () { up(''); });
+  $('#back').addEventListener('click', function () { up('hyou'); });
+  $('#back2').addEventListener('click', function () { up(''); });
   $('#bigchar').addEventListener('click', function () { if (cur) speak(K.YOMI[cur.k] || cur.c); });
   [0, 1, 2].forEach(function (i) {
     $('#tab' + i).addEventListener('click', function () { setTab(i, true); });
@@ -401,7 +562,6 @@
   $('#p1').addEventListener('click', onSay);
   $('#check').addEventListener('click', judge);
   $('#clear').addEventListener('click', clearInk);
-  $('#futariBtn').addEventListener('click', function () { go('futari'); });
   $('#placeShort').addEventListener('click', function () { setPlace('short'); });
   $('#placeLong').addEventListener('click', function () { setPlace('long'); });
   window.addEventListener('popstate', route);

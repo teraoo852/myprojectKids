@@ -27,6 +27,9 @@ KIDS.SAGASU = [
   ['ふね','fune'],['ほし','hoshi'],['つき','tsuki'],['はな','hana'],['とけい','tokei'],['めがね','megane'],['ほん','hon']
 ];
 
+/* いっしょに タワー の積み木（spec §16）: [形のキー, 名前（弟が押したときに読む）]。絵は icons.js の BLOCKS */
+KIDS.TSUMIKI = [['cube','しかく'],['plank','ながい いた'],['roof','さんかく'],['log','まるた'],['arch','アーチ']];
+
 /* を・ん の説明（spec §5）。strong は太字にする部分、example は を の例文カード */
 KIDS.NOTE = {
   wo: { text: '「を」は ことばの あいだで つかう もじだよ', strong: '', example: ['ほんを よむ', 'hon'] },

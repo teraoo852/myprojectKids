@@ -97,6 +97,9 @@ KIDS.ICONS = {
 };
 
 KIDS.UI = {
+  home:'<path d="M32 7L5 30h8v25h14V41h10v14h14V30h8z" fill="currentColor"/>',
+  sagasu:'<circle cx="26" cy="26" r="18" fill="#FFFFFF" stroke="#3E87B8" stroke-width="6"/><path d="M40 40l15 15" stroke="#3E87B8" stroke-width="9" stroke-linecap="round"/><path d="M33 26c0 4.5-4.5 8-10 8s-9-3.5-9-8 3.5-8 9-8 10 3.5 10 8z" fill="#6FA8CE"/><path d="M32 26l6-5v10z" fill="#4E88B0"/><circle cx="19" cy="24" r="1.8" fill="#25313A"/>',
+  tower:'<rect x="6" y="56" width="52" height="5" rx="2.5" fill="#648C45"/><rect x="12" y="44" width="40" height="12" rx="3" fill="#3E87B8"/><rect x="19" y="32" width="26" height="12" rx="3" fill="#A57A1C"/><path d="M32 16L46 32H18z" fill="#D8536D"/><path d="M32 4v13" stroke="#25313A" stroke-width="2.4"/><path d="M33 4h12l-3 4 3 4H33z" fill="#D9503A"/>',
   futari:'<circle cx="21" cy="19" r="10" fill="#3E87B8"/><path d="M7 57c0-11 6-21 14-21s14 10 14 21z" fill="#3E87B8"/><circle cx="45" cy="30" r="8" fill="#D55938"/><path d="M33 57c0-9 5-17 12-17s12 8 12 17z" fill="#D55938"/>',
   bulb:'<path d="M32 6c-11 0-19 8-19 18 0 7 4 12 8 15 2 2 3 4 3 7h16c0-3 1-5 3-7 4-3 8-8 8-15 0-10-8-18-19-18z" fill="#F2C94C"/><path d="M26 30l6 6 6-6" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="48" width="16" height="5" rx="2" fill="#9AA6AD"/><rect x="26" y="55" width="12" height="4" rx="2" fill="#9AA6AD"/>',
   frame:'<rect x="7" y="11" width="50" height="42" rx="5" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="23" cy="25" r="5" fill="currentColor"/><path d="M12 48l13-13 9 9 7-7 11 11z" fill="currentColor"/>',
@@ -105,3 +108,14 @@ KIDS.UI = {
   table:'<g fill="currentColor"><rect x="8" y="8" width="13" height="13" rx="3"/><rect x="25.5" y="8" width="13" height="13" rx="3"/><rect x="43" y="8" width="13" height="13" rx="3"/><rect x="8" y="25.5" width="13" height="13" rx="3"/><rect x="25.5" y="25.5" width="13" height="13" rx="3"/><rect x="43" y="25.5" width="13" height="13" rx="3"/><rect x="8" y="43" width="13" height="13" rx="3"/><rect x="25.5" y="43" width="13" height="13" rx="3"/><rect x="43" y="43" width="13" height="13" rx="3"/></g>',
   hanamaru:'<g fill="none" stroke="currentColor" stroke-width="3.6"><circle cx="52" cy="32" r="8"/><circle cx="46.1" cy="46.1" r="8"/><circle cx="32" cy="52" r="8"/><circle cx="17.9" cy="46.1" r="8"/><circle cx="12" cy="32" r="8"/><circle cx="17.9" cy="17.9" r="8"/><circle cx="32" cy="12" r="8"/><circle cx="46.1" cy="17.9" r="8"/></g><circle class="hana-bg" cx="32" cy="32" r="16"/><path d="M32 21c6 0 11 5 11 11s-5 11-11 11-11-5-11-11c0-4.4 3.2-7.6 7.4-7.6 3.6 0 6.2 2.6 6.2 5.8 0 2.6-1.8 4.4-4.2 4.4" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round"/>',
 };
+
+/* いっしょに タワー の積み木の絵（spec §16・viewBox 0 0 112 48）。COLOR に積み木の色を差し込む */
+KIDS.BLOCKS = {
+  cube:'<rect x="30" y="2" width="52" height="44" rx="5" fill="COLOR"/><rect x="36" y="8" width="40" height="12" rx="4" fill="#FFFFFF" opacity=".28"/>',
+  plank:'<rect x="2" y="12" width="108" height="34" rx="5" fill="COLOR"/><rect x="8" y="17" width="96" height="8" rx="4" fill="#FFFFFF" opacity=".28"/>',
+  roof:'<path d="M56 2L108 46H4z" fill="COLOR"/><path d="M56 14l26 22H30z" fill="#FFFFFF" opacity=".22"/>',
+  log:'<rect x="8" y="4" width="96" height="42" rx="21" fill="COLOR"/><ellipse cx="29" cy="25" rx="14" ry="17" fill="#F2DDB0"/><ellipse cx="29" cy="25" rx="6" ry="8" fill="none" stroke="#C9A063" stroke-width="2"/>',
+  arch:'<path d="M8 46V14a6 6 0 0 1 6-6h84a6 6 0 0 1 6 6v32H78V30a22 22 0 0 0-44 0v16z" fill="COLOR"/>'
+};
+/* 積み木の色: 行の色（style.css の data-row の --hue）から7色を順に使う */
+KIDS.TSUMIKI_COLORS = ['#D8536D', '#3E87B8', '#A57A1C', '#648C45', '#8876B7', '#468D80', '#6C80B2'];

@@ -1,4 +1,4 @@
-/* なぞって あいうえお — 見た目（spec §3〜§8・§13）。iPad Air 2（1024×768・Safari 15）横向き */
+/* なぞって あいうえお — 見た目（spec §3〜§8・§13〜§17）。iPad Air 2（1024×768・Safari 15）横向き */
 
 @font-face { font-family: "Zen Maru Gothic"; font-weight: 700; font-display: swap; src: url("../fonts/zen-maru-gothic-700.woff2") format("woff2"); }
 @font-face { font-family: "Zen Maru Gothic"; font-weight: 900; font-display: swap; src: url("../fonts/zen-maru-gothic-900.woff2") format("woff2"); }
@@ -8,6 +8,7 @@
   --paper: #F1F4EF; --plate: #FFFFFF; --art: #FFFFFF;
   --ink: #25313A; --ink-soft: #56656F; --rule: #DCE3DB;
   --accent: #D9503A; --accent-soft: #F7DCD6;
+  --wood: #E8C58A;
   --shadow: 0 1px 0 rgba(37, 49, 58, .06), 0 6px 18px -12px rgba(37, 49, 58, .45);
   --font: "Zen Maru Gothic", "Hiragino Maru Gothic ProN", "ヒラギノ丸ゴ ProN", sans-serif;
   --adult: "Hiragino Sans", "ヒラギノ角ゴシック", sans-serif;
@@ -53,7 +54,7 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
 button:active { transform: scale(.95); }
 
 .ico { display: inline-block; width: 32px; height: 32px; flex: none; }
-.ico svg, .pic svg, .maru svg { display: block; width: 100%; height: 100%; }
+.ico svg, .pic svg, .maru svg, .menu-pic svg, .tw-hand svg, .sg-hintpic svg, .sg-img svg { display: block; width: 100%; height: 100%; }
 .nt { font-size: 24px; color: var(--ink-soft); line-height: 1; }
 
 /* ── 読み込み中・失敗・縦向き（spec §8） ── */
@@ -76,13 +77,9 @@ button:active { transform: scale(.95); }
 .app { position: fixed; top: 0; right: 0; bottom: 0; left: 0; padding: 16px; }
 .screen { height: 100%; }
 
-/* ── 画面1 ひょう（spec §3） ── */
-.chart { display: flex; flex-direction: column; gap: 12px; }
+/* 上端の1行（画面0・画面1） */
 .head { display: flex; align-items: center; gap: 24px; min-height: 56px; }
 .title { flex: 1; margin: 0; font-size: 32px; font-weight: 900; letter-spacing: .04em; }
-.count { font-size: 24px; white-space: nowrap; }
-.count .mk, .count b { color: var(--accent); }
-.count b { font-size: 28px; }
 .help {
   position: relative; width: 56px; height: 56px; border-radius: 50%;
   background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
@@ -92,6 +89,34 @@ button:active { transform: scale(.95); }
   position: absolute; top: -6px; right: -6px; min-width: 26px; height: 26px; border-radius: 13px;
   background: var(--accent); color: #FFFFFF; font-size: 18px; line-height: 26px;
 }
+.back {
+  display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px;
+  border-radius: 14px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 22px; color: var(--ink-soft);
+}
+
+/* ── 画面0 メニュー（spec §17）: 絵と色で選べる大きなカード3枚 ── */
+.menu { display: flex; flex-direction: column; gap: 16px; }
+.menu-cards { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.menu-card {
+  min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px;
+  border-radius: 28px; background: var(--plate); border: 3px solid var(--hue); box-shadow: var(--shadow);
+}
+.menu-pic {
+  flex: 1; min-height: 0; width: 100%; display: flex; align-items: center; justify-content: center; padding: 12%;
+  border-radius: 20px; background: var(--tint);
+}
+.menu-kana { font-size: 180px; font-weight: 900; line-height: 1; color: var(--hue); }
+.menu-name { font-size: 30px; font-weight: 900; color: var(--ink); white-space: nowrap; }
+.menu-tag { display: flex; align-items: center; gap: 6px; min-height: 36px; font-size: 22px; color: var(--ink-soft); }
+.menu-tag .ico { width: 36px; height: 36px; }
+.menu-tag .mk, .menu-tag b { color: var(--accent); }
+
+/* ── 画面1 ひょう（spec §3） ── */
+.chart { display: flex; flex-direction: column; gap: 12px; }
+.count { font-size: 24px; white-space: nowrap; }
+.count .mk, .count b { color: var(--accent); }
+.count b { font-size: 28px; }
 /* 10列×5段・右から あ行（縦書きの五十音表） */
 .grid {
   flex: 1; min-height: 0;
@@ -111,11 +136,6 @@ button:active { transform: scale(.95); }
 /* ── 画面2〜4 もじページの枠（spec §4） ── */
 .detail { display: flex; gap: 24px; }
 .side { width: 240px; flex: none; display: flex; flex-direction: column; gap: 12px; }
-.back {
-  display: flex; align-items: center; gap: 10px; height: 56px; padding: 0 16px;
-  border-radius: 14px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
-  font-size: 22px; color: var(--ink-soft);
-}
 .big {
   position: relative; height: 200px; flex: none;
   display: flex; align-items: center; justify-content: center;
@@ -211,7 +231,6 @@ button:active { transform: scale(.95); }
 .adult h2 { margin: 24px 0 4px; font-weight: 700; font-size: 22px; }
 .adult ul { margin: 0; padding-left: 1.4em; }
 .warn { margin: 16px 0 0; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
-
 .place { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
 .place-btn {
   min-height: 48px; padding: 8px 16px; border-radius: 12px; border: 2px solid var(--ink);
@@ -219,58 +238,66 @@ button:active { transform: scale(.95); }
 }
 .place-btn[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
 
-/* 画面1 の「ふたりで」ボタン */
-.futari-btn {
-  display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 20px 0 12px;
-  border-radius: 28px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
-  font-size: 22px; color: var(--ink);
-}
-.futari-btn .ico { width: 40px; height: 40px; }
-
-/* ── 画面6 ものさがし（spec §14・§15）: 向かい合わせ ──
+/* ── ふたりで あそぶ 画面の共通（spec §14）: 向かい合わせ ──
    .fs＝各自の側。色は data-row（兄＝さ行の青・弟＝は行の朱）。
    短い辺: 左右に分け、各自の側を向かいの子のほうへ回す（中身の上が、画面の真ん中を向く） */
-.futari { position: relative; }
+.duo { position: relative; touch-action: none; }     /* 2人の指が同時に乗っても Safari の操作にしない */
 .fs {
   position: absolute; display: flex; flex-direction: column; gap: 12px; padding: 14px 18px;
   border-radius: 24px; background: var(--tint); border: 3px solid var(--hue);
 }
-.futari[data-place="short"] .fs {
-  top: 50%; width: calc(100vh - 32px); height: calc(50vw - 22px);
-}
-.futari[data-place="short"] .fs-ani { left: calc(25% - 3px); transform: translate(-50%, -50%) rotate(90deg); }
-.futari[data-place="short"] .fs-oto { left: calc(75% + 3px); transform: translate(-50%, -50%) rotate(-90deg); }
+.duo[data-place="short"] .fs { top: 50%; width: calc(100vh - 32px); height: calc(50vw - 22px); }
+.duo[data-place="short"] .fs-ani { left: calc(25% - 3px); transform: translate(-50%, -50%) rotate(90deg); }
+.duo[data-place="short"] .fs-oto { left: calc(75% + 3px); transform: translate(-50%, -50%) rotate(-90deg); }
 /* 長い辺: 上下に分け、上（兄）の側を逆さまに */
-.futari[data-place="long"] .fs { left: 0; right: 0; height: calc(50% - 6px); }
-.futari[data-place="long"] .fs-ani { top: 0; transform: rotate(180deg); }
-.futari[data-place="long"] .fs-oto { bottom: 0; }
+.duo[data-place="long"] .fs { left: 0; right: 0; height: calc(50% - 6px); }
+.duo[data-place="long"] .fs-ani { top: 0; transform: rotate(180deg); }
+.duo[data-place="long"] .fs-oto { bottom: 0; }
 
 .fs-head { display: flex; align-items: center; gap: 12px; min-height: 56px; }
 .fs-who { padding: 6px 18px; border-radius: 28px; background: var(--hue); color: #FFFFFF; font-size: 22px; font-weight: 900; }
 .fs-say { flex: 1; font-size: 20px; color: var(--ink-soft); }
-.fs-back { justify-content: center; flex: none; font-size: 20px; }
 .fs-body { flex: 1; min-height: 0; display: flex; gap: 14px; }
+.fs-col { width: 200px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+.fs-back { justify-content: center; flex: none; font-size: 20px; }
+.fs-tally { padding: 8px; border-radius: 16px; background: var(--plate); font-size: 22px; text-align: center; white-space: nowrap; }
+.fs-tally .mk, .fs-tally b { color: var(--accent); }
+.fs-tally b { font-size: 28px; }
 
+/* 両方の向きに出すお祝い（見つけた・たかい） */
+.duo-stamp {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  display: flex; align-items: center; justify-content: space-around;
+  background: rgba(255, 255, 255, .6); opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+.duo[data-place="long"] .duo-stamp { flex-direction: column; }
+.duo-stamp.on { opacity: 1; }
+.duo-card {
+  margin: 0; padding: 14px 36px; border-radius: 24px; background: var(--plate); box-shadow: var(--shadow);
+  font-size: 36px; font-weight: 900; line-height: 1.25; color: var(--accent); text-align: center;
+}
+.duo-card .pair { display: block; font-size: 52px; letter-spacing: .2em; }
+.duo-card .pair b { color: var(--hue); }
+.duo-card small { display: block; font-size: 20px; color: var(--ink-soft); }
+.duo[data-place="short"] .duo-card-ani { transform: rotate(90deg); }
+.duo[data-place="short"] .duo-card-oto { transform: rotate(-90deg); }
+.duo[data-place="long"] .duo-card-ani { transform: rotate(180deg); }
+
+/* ── 画面6 ものさがし（spec §15） ── */
 .sg-word {
   flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
   border-radius: 22px; background: var(--plate); box-shadow: var(--shadow);
   font-size: 96px; font-weight: 900; line-height: 1.1; letter-spacing: .06em; color: var(--hue);
 }
-.sg-col { width: 200px; flex: none; display: flex; flex-direction: column; gap: 12px; }
 .sg-hint {
   flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
   border-radius: 20px; background: var(--plate); border: 2px dashed var(--rule); font-size: 22px; color: var(--ink-soft);
 }
 .sg-hintpic { display: block; width: 104px; height: 104px; }
 /* 長い辺のときは各自の側が低いので、ヒント・数・もどる が縦に入るよう絵を小さく */
-.futari[data-place="long"] .sg-hintpic { width: 72px; height: 72px; }
-.sg-hintpic svg, .sg-img svg { display: block; width: 100%; height: 100%; }
-.sg-tally { padding: 8px; border-radius: 16px; background: var(--plate); font-size: 22px; text-align: center; white-space: nowrap; }
-.sg-tally .mk, .sg-tally b { color: var(--accent); }
-.sg-tally b { font-size: 28px; }
-
+.duo[data-place="long"] .sg-hintpic { width: 72px; height: 72px; }
 .sg-pics { flex: 1; min-height: 0; display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
-.futari[data-place="long"] .sg-pics { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; }
+.duo[data-place="long"] .sg-pics { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; }
 .sg-pic {
   min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 6px;
   border-radius: 18px; background: var(--plate); border: 4px solid transparent; box-shadow: var(--shadow);
@@ -279,27 +306,68 @@ button:active { transform: scale(.95); }
 .sg-pic.glow { border: 6px solid #E2B93B; }                 /* ヒント2回目（兄が指させる目印） */
 .sg-pic.hit { border-color: var(--accent); background: var(--accent-soft); }
 
-/* 見つけたら 両方の向きに はなまる */
-.sg-stamp {
-  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
-  display: flex; align-items: center; justify-content: space-around;
-  background: rgba(255, 255, 255, .6); opacity: 0; pointer-events: none; transition: opacity .2s ease;
+/* ── 画面7 いっしょに タワー（spec §16） ──
+   --blk-h＝タワーに積んだ積み木の高さ（長い辺のときは各自の側が低いので小さく） */
+.duo[data-place="short"] { --blk-h: 44px; --take-h: 60px; }
+.duo[data-place="long"]  { --blk-h: 28px; --take-h: 44px; }
+.tw-blk { display: block; flex: none; height: var(--blk-h); aspect-ratio: 112 / 48; }
+.tw-blk svg { display: block; width: 100%; height: 100%; }
+.tw-tower {
+  flex: 1; min-width: 0; position: relative;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 44px 12px 18px;
+  border-radius: 20px; background: var(--plate); box-shadow: var(--shadow);
+  background-image: linear-gradient(to top, var(--wood) 0 14px, transparent 14px);
 }
-.futari[data-place="long"] .sg-stamp { flex-direction: column; }
-.sg-stamp.on { opacity: 1; }
-.sg-card {
-  margin: 0; padding: 14px 36px; border-radius: 24px; background: var(--plate); box-shadow: var(--shadow);
-  font-size: 36px; font-weight: 900; line-height: 1.25; color: var(--accent); text-align: center;
+.duo[data-place="long"] .tw-tower { padding-top: 34px; }
+.tw-col {
+  min-width: 0; min-height: 0; display: flex; flex-direction: column-reverse; align-items: center;
+  border-radius: 14px; border: 3px dashed transparent;
 }
-.sg-card .pair { display: block; font-size: 52px; letter-spacing: .2em; }
-.sg-card .pair b { color: var(--hue); }
-.sg-card small { display: block; font-size: 20px; color: var(--ink-soft); }
-.futari[data-place="short"] .sg-card-ani { transform: rotate(90deg); }
-.futari[data-place="short"] .sg-card-oto { transform: rotate(-90deg); }
-.futari[data-place="long"] .sg-card-ani { transform: rotate(180deg); }
+.tw-col.pick { border-color: var(--hue); background: var(--tint); }       /* 選んだ積み木を置ける列 */
+.tw-col.over { border-color: var(--accent); border-style: solid; background: var(--accent-soft); }   /* 運んでいる積み木の下の列 */
+.tw-high { position: absolute; top: 6px; left: 14px; font-size: 22px; color: var(--ink-soft); }
+.tw-high b { font-size: 28px; color: var(--accent); }
+.tw-flag { position: absolute; top: 0; left: 50%; transform: translateX(-50%); font-size: 36px; line-height: 1.2; opacity: 0; }
+.tw-flag.on { opacity: 1; }
+.tw-again {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0; margin: auto; width: 250px; height: 80px;
+  border-radius: 24px; background: var(--accent); color: #FFFFFF; font-size: 28px; font-weight: 900; box-shadow: var(--shadow);
+}
+.tw-tray {
+  flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px;
+  border-radius: 16px; background: var(--plate); border: 2px dashed var(--rule); overflow: hidden;
+}
+.tw-tray.full { border: 2px solid var(--accent); }
+.tw-tray-lbl { font-size: 18px; line-height: 1.3; color: var(--ink-soft); text-align: center; }
+.duo[data-place="long"] .tw-tray-lbl { display: none; }
+.tw-tray-blocks { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tw-take { height: var(--take-h); padding: 2px; border-radius: 12px; border: 3px solid transparent; touch-action: none; }
+.tw-take.sel { border-color: var(--ink); }
+.tw-take.lift { opacity: .3; }
+.tw-oto { flex: 1; min-height: 0; display: flex; gap: 16px; }
+.tw-push {
+  flex: 1; min-width: 0; display: flex; align-items: center; justify-content: center; gap: 20px;
+  border-radius: 28px; background: var(--plate); box-shadow: var(--shadow);
+  font-size: 48px; font-weight: 900; color: var(--hue);
+}
+.tw-hand { display: block; width: 160px; height: 160px; }
+.duo[data-place="long"] .tw-hand { width: 120px; height: 120px; }
+.tw-drop { width: 180px; flex: none; display: flex; align-items: center; justify-content: center; }
+.tw-drop .tw-blk { height: 64px; }
+.tw-pop { animation: pop .3s ease-out; }
+@keyframes pop { from { transform: scale(.4); opacity: 0; } to { transform: none; opacity: 1; } }
+/* 兄が運んでいる積み木: 指の位置に置き、兄の向きに回す（位置は JS が指に合わせて置く） */
+.tw-ghost {
+  position: fixed; z-index: 6; height: 64px; aspect-ratio: 112 / 48; pointer-events: none;
+  filter: drop-shadow(0 6px 8px rgba(37, 49, 58, .3));
+}
+.tw-ghost svg { display: block; width: 100%; height: 100%; }
+.duo[data-place="short"] .tw-ghost { transform: translate(-50%, -50%) rotate(90deg); }
+.duo[data-place="long"] .tw-ghost { transform: translate(-50%, -50%) rotate(180deg); }
 
 /* 動きを減らす設定のとき: 縮む・ふわっと出る をやめ、押したら少し暗くするだけにする */
 @media (prefers-reduced-motion: reduce) {
-  button, .maru, .sg-stamp { transition: none; }
+  button, .maru, .duo-stamp { transition: none; }
   button:active { transform: none; filter: brightness(.9); }
+  .tw-pop { animation: none; }
 }

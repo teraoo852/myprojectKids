@@ -102,5 +102,14 @@ const notThere = list.filter((f) => !files.includes(f));
 ok(!notListed.length, 'site/ のファイルが全部 先読み一覧にある', notListed.join(','));
 ok(!notThere.length, '先読み一覧のファイルが全部 site/ にある', notThere.join(','));
 
+/* ── 6. いっしょに タワー の積み木（spec §16） ── */
+const kinds = K.TSUMIKI || [];
+ok(kinds.length === 5, '積み木は5種類', String(kinds.length));
+const noBlock = kinds.filter((t) => !(K.BLOCKS && K.BLOCKS[t[0]] && K.BLOCKS[t[0]].includes('COLOR')));
+ok(!noBlock.length, '積み木の絵が全部ある（色は COLOR で差し込む）', noBlock.map((t) => t[0]).join(','));
+const colors = K.TSUMIKI_COLORS || [];
+const offRow = colors.filter((c) => !css.includes(c));
+ok(colors.length > 0 && !offRow.length, '積み木の色は行の色（style.css の --hue にある色）', offRow.join(','));
+
 console.log(bad ? `\nNG ${bad} 件` : '\nすべて OK');
 process.exit(bad ? 1 : 0);

@@ -40,13 +40,37 @@
 
 <div id="app" class="app" hidden>
 
+  <!-- 画面0 メニュー（spec §17）。ホーム画面のアイコンは ここから開く -->
+  <section id="menu" class="screen menu" hidden>
+    <header class="head">
+      <h1 class="title">なにで あそぶ？</h1>
+      <button id="help" class="help" aria-label="おとなの ひとへ">？<span id="helpBadge" class="badge" hidden>！</span></button>
+    </header>
+    <div class="menu-cards">
+      <button id="goHyou" class="menu-card" data-row="1">
+        <span class="menu-pic"><span class="menu-kana">あ</span></span>
+        <span class="menu-name">なぞって あいうえお</span>
+        <span class="menu-tag"><span class="mk" aria-hidden="true">◎</span> <b id="menuStars">0</b> / <span id="menuTotal">46</span></span>
+      </button>
+      <button id="goSagasu" class="menu-card" data-row="3">
+        <span class="menu-pic" data-ui="sagasu"></span>
+        <span class="menu-name">ものさがし</span>
+        <span class="menu-tag"><span class="ico" data-ui="futari"></span>ふたりで</span>
+      </button>
+      <button id="goTower" class="menu-card" data-row="6">
+        <span class="menu-pic" data-ui="tower"></span>
+        <span class="menu-name">いっしょに タワー</span>
+        <span class="menu-tag"><span class="ico" data-ui="futari"></span>ふたりで</span>
+      </button>
+    </div>
+  </section>
+
   <!-- 画面1 ひょう（spec §3） -->
   <section id="chart" class="screen chart" hidden>
     <header class="head">
+      <button id="backMenu" class="back"><span class="ico" data-ui="home"></span>もどる</button>
       <h1 class="title">なぞって あいうえお</h1>
-      <button id="futariBtn" class="futari-btn"><span class="ico" data-ui="futari"></span>ふたりで</button>
       <p class="count"><span class="mk" aria-hidden="true">◎</span> はなまる <b id="stars">0</b> / <span id="total">46</span></p>
-      <button id="help" class="help" aria-label="おとなの ひとへ">？<span id="helpBadge" class="badge" hidden>！</span></button>
     </header>
     <div id="grid" class="grid"></div>
   </section>
@@ -84,16 +108,16 @@
   </section>
 
   <!-- 画面6 ものさがし（spec §14・§15）。各自の側を、向かいに座る子のほうへ回して描く -->
-  <section id="futari" class="screen futari" data-place="short" hidden>
+  <section id="sagasu" class="screen duo" data-place="short" hidden>
     <div class="fs fs-ani" data-row="3">
       <div class="fs-head"><span class="fs-who">おにいちゃん</span><span class="fs-say">よんで あげてね</span></div>
       <div class="fs-body">
         <button id="sgWord" class="sg-word" aria-label="ことばを きく"><span id="sgWordText"></span><span class="nt" aria-hidden="true">♪</span></button>
-        <div class="sg-col">
+        <div class="fs-col">
           <button id="sgHint" class="sg-hint"><span id="sgHintPic" class="sg-hintpic" data-ui="bulb"></span>ヒント</button>
-          <p class="sg-tally"><span class="mk" aria-hidden="true">◎</span> ふたりで <b id="sgFound">0</b> こ</p>
+          <p class="fs-tally"><span class="mk" aria-hidden="true">◎</span> ふたりで <b id="sgFound">0</b> こ</p>
           <!-- もどる は兄の手元の角（各自の側の上は画面の真ん中＝弟の近くを向くので、下の段に置く） -->
-          <button id="sgBack" class="back fs-back"><span class="ico" data-ui="table"></span>もどる</button>
+          <button id="sgBack" class="back fs-back"><span class="ico" data-ui="home"></span>もどる</button>
         </div>
       </div>
     </div>
@@ -101,21 +125,56 @@
       <div class="fs-head"><span class="fs-who">おとうと</span><span class="fs-say">えを おしてね</span></div>
       <div id="sgPics" class="sg-pics"></div>
     </div>
-    <div id="sgStamp" class="sg-stamp" aria-live="polite">
-      <p class="sg-card sg-card-ani"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
-      <p class="sg-card sg-card-oto"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
+    <div id="sgStamp" class="duo-stamp" aria-live="polite">
+      <p class="duo-card duo-card-ani"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
+      <p class="duo-card duo-card-oto"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
     </div>
+  </section>
+
+  <!-- 画面7 いっしょに タワー（spec §14・§16） -->
+  <section id="tower" class="screen duo" data-place="short" hidden>
+    <div class="fs fs-ani" data-row="3">
+      <div class="fs-head"><span class="fs-who">おにいちゃん</span><span class="fs-say">ゆびで はこんで つんでね</span></div>
+      <div class="fs-body">
+        <div id="twTower" class="tw-tower">
+          <p class="tw-high"><b id="twHigh">0</b> だん</p>
+          <span id="twFlag" class="tw-flag" aria-hidden="true">🚩</span>
+          <div class="tw-col" data-col="0"></div>
+          <div class="tw-col" data-col="1"></div>
+          <div class="tw-col" data-col="2"></div>
+          <button id="twAgain" class="tw-again" hidden>もういちど つむ</button>
+        </div>
+        <div class="fs-col">
+          <div id="twTray" class="tw-tray"><span class="tw-tray-lbl">おとうとから<br>とどいた</span><div id="twTrayBlocks" class="tw-tray-blocks"></div></div>
+          <button id="twBack" class="back fs-back"><span class="ico" data-ui="home"></span>もどる</button>
+        </div>
+      </div>
+    </div>
+    <div class="fs fs-oto" data-row="6">
+      <div class="fs-head"><span class="fs-who">おとうと</span><span class="fs-say">おしてね</span></div>
+      <div class="tw-oto">
+        <button id="twPush" class="tw-push"><span class="tw-hand" data-ui="finger"></span>おす！</button>
+        <div id="twDrop" class="tw-drop" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div id="twStamp" class="duo-stamp" aria-live="polite">
+      <p class="duo-card duo-card-ani"><span class="pair">🚩</span>たかい！<small>ふたりで つんだね</small></p>
+      <p class="duo-card duo-card-oto"><span class="pair">🚩</span>たかい！<small>ふたりで つんだね</small></p>
+    </div>
+    <!-- 兄が運んでいる積み木（指の位置に付いてくる） -->
+    <div id="twGhost" class="tw-ghost" hidden></div>
   </section>
 
   <!-- 画面5 おとなの ひとへ（spec §13） -->
   <section id="otona" class="screen adult" hidden>
     <div class="inner">
-      <button id="back2" class="back"><span class="ico" data-ui="table"></span>もどる</button>
+      <button id="back2" class="back"><span class="ico" data-ui="home"></span>もどる</button>
       <div id="warns"></div>
 
       <h2>つかいかた</h2>
       <ul>
-        <li>表の字を押すと、その字のページが開きます。</li>
+        <li>最初のメニューで あそびを選びます。どの画面も「もどる」で ひとつ上の画面に戻ります。</li>
+        <li>なぞって あいうえお: 表の字を押すと、その字のページが開きます。</li>
         <li>「え と ことば」: 絵と単語。押すと読み上げます（下の子は ここだけで遊べます）。</li>
         <li>「ことば」: 絵なしで単語を読みます。</li>
         <li>「なぞる」: 白い字を指でなぞって「できた！」。はなまるが取れると、表の字に ◎ が付きます。</li>
@@ -124,7 +183,7 @@
       <h2>ひらきかた</h2>
       <ul>
         <li><strong>ホーム画面のアイコンから開いてください。</strong>Safari から開くと、はなまるの記録が別になり、しばらく開かないと消されることがあります。</li>
-        <li>ホーム画面に追加するのは、<strong>表を開いているとき</strong>にしてください（Safari の共有ボタン › ホーム画面に追加）。</li>
+        <li>ホーム画面に追加するのは、<strong>メニューを開いているとき</strong>にしてください（Safari の共有ボタン › ホーム画面に追加）。</li>
         <li>1度開けば、ネットにつながっていなくても開けます。</li>
       </ul>
 
@@ -134,10 +193,11 @@
         <li>消したいときは、ホーム画面のアイコンを削除して、追加し直してください。</li>
       </ul>
 
-      <h2>ふたりで あそぶ（ものさがし）</h2>
+      <h2>ふたりで あそぶ（ものさがし・いっしょに タワー）</h2>
       <ul>
-        <li>表の「ふたりで」から開きます。iPad を机に平らに置き、ふたりが向かい合って座ります。</li>
-        <li>おにいちゃんが字を読んで伝え、おとうとが絵を探します。おとうとは どの絵を押しても名前が聞けるだけで、間違いにはなりません。</li>
+        <li>iPad を机に平らに置き、ふたりが向かい合って座ります。</li>
+        <li>ものさがし: おにいちゃんが字を読んで伝え、おとうとが絵を探します。おとうとは どの絵を押しても名前が聞けるだけで、間違いにはなりません。</li>
+        <li>いっしょに タワー: おとうとが「おす！」を押すと積み木が届き、おにいちゃんが指で運んで積みます。6だんで旗が立ちます。</li>
         <li>座る側を入れ替えたいときは、iPad を180度回してください。平らに置くと画面の向きが変わることがあるので、画面の向きのロックを使ってください。</li>
       </ul>
       <div class="place" role="group" aria-label="ふたりで あそぶ ときの 置き方">

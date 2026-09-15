@@ -212,8 +212,94 @@ button:active { transform: scale(.95); }
 .adult ul { margin: 0; padding-left: 1.4em; }
 .warn { margin: 16px 0 0; padding: 12px 16px; border: 2px solid var(--accent); border-radius: 12px; background: var(--accent-soft); }
 
+.place { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+.place-btn {
+  min-height: 48px; padding: 8px 16px; border-radius: 12px; border: 2px solid var(--ink);
+  background: var(--plate); font-family: var(--adult); font-weight: 700; font-size: 16px;
+}
+.place-btn[aria-pressed="true"] { background: var(--ink); color: #FFFFFF; }
+
+/* 画面1 の「ふたりで」ボタン */
+.futari-btn {
+  display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 20px 0 12px;
+  border-radius: 28px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 22px; color: var(--ink);
+}
+.futari-btn .ico { width: 40px; height: 40px; }
+
+/* ── 画面6 ものさがし（spec §14・§15）: 向かい合わせ ──
+   .fs＝各自の側。色は data-row（兄＝さ行の青・弟＝は行の朱）。
+   短い辺: 左右に分け、各自の側を向かいの子のほうへ回す（中身の上が、画面の真ん中を向く） */
+.futari { position: relative; }
+.fs {
+  position: absolute; display: flex; flex-direction: column; gap: 12px; padding: 14px 18px;
+  border-radius: 24px; background: var(--tint); border: 3px solid var(--hue);
+}
+.futari[data-place="short"] .fs {
+  top: 50%; width: calc(100vh - 32px); height: calc(50vw - 22px);
+}
+.futari[data-place="short"] .fs-ani { left: calc(25% - 3px); transform: translate(-50%, -50%) rotate(90deg); }
+.futari[data-place="short"] .fs-oto { left: calc(75% + 3px); transform: translate(-50%, -50%) rotate(-90deg); }
+/* 長い辺: 上下に分け、上（兄）の側を逆さまに */
+.futari[data-place="long"] .fs { left: 0; right: 0; height: calc(50% - 6px); }
+.futari[data-place="long"] .fs-ani { top: 0; transform: rotate(180deg); }
+.futari[data-place="long"] .fs-oto { bottom: 0; }
+
+.fs-head { display: flex; align-items: center; gap: 12px; min-height: 56px; }
+.fs-who { padding: 6px 18px; border-radius: 28px; background: var(--hue); color: #FFFFFF; font-size: 22px; font-weight: 900; }
+.fs-say { flex: 1; font-size: 20px; color: var(--ink-soft); }
+.fs-back { justify-content: center; flex: none; font-size: 20px; }
+.fs-body { flex: 1; min-height: 0; display: flex; gap: 14px; }
+
+.sg-word {
+  flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px;
+  border-radius: 22px; background: var(--plate); box-shadow: var(--shadow);
+  font-size: 96px; font-weight: 900; line-height: 1.1; letter-spacing: .06em; color: var(--hue);
+}
+.sg-col { width: 200px; flex: none; display: flex; flex-direction: column; gap: 12px; }
+.sg-hint {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 20px; background: var(--plate); border: 2px dashed var(--rule); font-size: 22px; color: var(--ink-soft);
+}
+.sg-hintpic { display: block; width: 104px; height: 104px; }
+/* 長い辺のときは各自の側が低いので、ヒント・数・もどる が縦に入るよう絵を小さく */
+.futari[data-place="long"] .sg-hintpic { width: 72px; height: 72px; }
+.sg-hintpic svg, .sg-img svg { display: block; width: 100%; height: 100%; }
+.sg-tally { padding: 8px; border-radius: 16px; background: var(--plate); font-size: 22px; text-align: center; white-space: nowrap; }
+.sg-tally .mk, .sg-tally b { color: var(--accent); }
+.sg-tally b { font-size: 28px; }
+
+.sg-pics { flex: 1; min-height: 0; display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(3, 1fr); }
+.futari[data-place="long"] .sg-pics { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(2, 1fr); gap: 8px; }
+.sg-pic {
+  min-width: 0; min-height: 0; display: flex; align-items: center; justify-content: center; padding: 6px;
+  border-radius: 18px; background: var(--plate); border: 4px solid transparent; box-shadow: var(--shadow);
+}
+.sg-img { display: block; height: 100%; max-width: 100%; aspect-ratio: 1 / 1; }
+.sg-pic.glow { border: 6px solid #E2B93B; }                 /* ヒント2回目（兄が指させる目印） */
+.sg-pic.hit { border-color: var(--accent); background: var(--accent-soft); }
+
+/* 見つけたら 両方の向きに はなまる */
+.sg-stamp {
+  position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  display: flex; align-items: center; justify-content: space-around;
+  background: rgba(255, 255, 255, .6); opacity: 0; pointer-events: none; transition: opacity .2s ease;
+}
+.futari[data-place="long"] .sg-stamp { flex-direction: column; }
+.sg-stamp.on { opacity: 1; }
+.sg-card {
+  margin: 0; padding: 14px 36px; border-radius: 24px; background: var(--plate); box-shadow: var(--shadow);
+  font-size: 36px; font-weight: 900; line-height: 1.25; color: var(--accent); text-align: center;
+}
+.sg-card .pair { display: block; font-size: 52px; letter-spacing: .2em; }
+.sg-card .pair b { color: var(--hue); }
+.sg-card small { display: block; font-size: 20px; color: var(--ink-soft); }
+.futari[data-place="short"] .sg-card-ani { transform: rotate(90deg); }
+.futari[data-place="short"] .sg-card-oto { transform: rotate(-90deg); }
+.futari[data-place="long"] .sg-card-ani { transform: rotate(180deg); }
+
 /* 動きを減らす設定のとき: 縮む・ふわっと出る をやめ、押したら少し暗くするだけにする */
 @media (prefers-reduced-motion: reduce) {
-  button, .maru { transition: none; }
+  button, .maru, .sg-stamp { transition: none; }
   button:active { transform: none; filter: brightness(.9); }
 }

@@ -1,7 +1,7 @@
 /* サービスワーカー: 1度開けば ネットが無くても開ける（spec §8）
  * ★ site/ のファイルを変えて push するときは、VERSION の数を1つ上げる（上げ忘れると iPad が古いまま）
  * ★ ファイルを足したり消したりしたら FILES も直す（tests/check.mjs が site/ と照らし合わせる） */
-var VERSION = 'kids-v2';
+var VERSION = 'kids-v3';
 var FILES = [
   "./",
   "index.html",

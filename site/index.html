@@ -44,6 +44,7 @@
   <section id="chart" class="screen chart" hidden>
     <header class="head">
       <h1 class="title">なぞって あいうえお</h1>
+      <button id="futariBtn" class="futari-btn"><span class="ico" data-ui="futari"></span>ふたりで</button>
       <p class="count"><span class="mk" aria-hidden="true">◎</span> はなまる <b id="stars">0</b> / <span id="total">46</span></p>
       <button id="help" class="help" aria-label="おとなの ひとへ">？<span id="helpBadge" class="badge" hidden>！</span></button>
     </header>
@@ -82,6 +83,30 @@
     </div>
   </section>
 
+  <!-- 画面6 ものさがし（spec §14・§15）。各自の側を、向かいに座る子のほうへ回して描く -->
+  <section id="futari" class="screen futari" data-place="short" hidden>
+    <div class="fs fs-ani" data-row="3">
+      <div class="fs-head"><span class="fs-who">おにいちゃん</span><span class="fs-say">よんで あげてね</span></div>
+      <div class="fs-body">
+        <button id="sgWord" class="sg-word" aria-label="ことばを きく"><span id="sgWordText"></span><span class="nt" aria-hidden="true">♪</span></button>
+        <div class="sg-col">
+          <button id="sgHint" class="sg-hint"><span id="sgHintPic" class="sg-hintpic" data-ui="bulb"></span>ヒント</button>
+          <p class="sg-tally"><span class="mk" aria-hidden="true">◎</span> ふたりで <b id="sgFound">0</b> こ</p>
+          <!-- もどる は兄の手元の角（各自の側の上は画面の真ん中＝弟の近くを向くので、下の段に置く） -->
+          <button id="sgBack" class="back fs-back"><span class="ico" data-ui="table"></span>もどる</button>
+        </div>
+      </div>
+    </div>
+    <div class="fs fs-oto" data-row="6">
+      <div class="fs-head"><span class="fs-who">おとうと</span><span class="fs-say">えを おしてね</span></div>
+      <div id="sgPics" class="sg-pics"></div>
+    </div>
+    <div id="sgStamp" class="sg-stamp" aria-live="polite">
+      <p class="sg-card sg-card-ani"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
+      <p class="sg-card sg-card-oto"><span class="pair"><b data-row="3">◎</b><b data-row="6">◎</b></span>みつけた！<small>ふたりとも はなまる</small></p>
+    </div>
+  </section>
+
   <!-- 画面5 おとなの ひとへ（spec §13） -->
   <section id="otona" class="screen adult" hidden>
     <div class="inner">
@@ -108,6 +133,17 @@
         <li>この iPad だけに覚えます（2人で共有です）。</li>
         <li>消したいときは、ホーム画面のアイコンを削除して、追加し直してください。</li>
       </ul>
+
+      <h2>ふたりで あそぶ（ものさがし）</h2>
+      <ul>
+        <li>表の「ふたりで」から開きます。iPad を机に平らに置き、ふたりが向かい合って座ります。</li>
+        <li>おにいちゃんが字を読んで伝え、おとうとが絵を探します。おとうとは どの絵を押しても名前が聞けるだけで、間違いにはなりません。</li>
+        <li>座る側を入れ替えたいときは、iPad を180度回してください。平らに置くと画面の向きが変わることがあるので、画面の向きのロックを使ってください。</li>
+      </ul>
+      <div class="place" role="group" aria-label="ふたりで あそぶ ときの 置き方">
+        <button id="placeShort" class="place-btn" aria-pressed="true">短い辺で向かい合う（左が おにいちゃん）</button>
+        <button id="placeLong" class="place-btn" aria-pressed="false">長い辺で向かい合う（上が おにいちゃん）</button>
+      </div>
 
       <h2>こどもが つかうとき</h2>
       <ul>

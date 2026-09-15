@@ -101,7 +101,7 @@
   });
 
   /* ── 画面の切り替えと URL（spec §4） ── */
-  var SCREENS = ['chart', 'detail', 'otona'];
+  var SCREENS = ['chart', 'detail', 'otona', 'futari'];
   var cur = null;
   function show(name) {
     SCREENS.forEach(function (id) { $('#' + id).hidden = id !== name; });
@@ -109,6 +109,7 @@
   function route() {
     var h = decodeURIComponent(location.hash.slice(1));
     if (h === 'otona') showHelp();
+    else if (h === 'futari') showFutari();
     else if (h && byKey[h]) openChar(h);
     else showChart();
   }
@@ -276,6 +277,103 @@
   box.addEventListener('touchstart', function (e) { e.preventDefault(); }, { passive: false });
   box.addEventListener('touchmove', function (e) { e.preventDefault(); }, { passive: false });
 
+  /* ── 画面6 ものさがし（spec §14・§15） ── */
+
+  /* 指ごとに受け付ける「押した」: 2人が同時に押しても両方効く（§14 の決まり4）。
+     押した指が そのまま同じ物の上で離れたときだけ fn を呼ぶ */
+  function onTap(root, sel, fn) {
+    var downs = {};
+    root.addEventListener('pointerdown', function (e) {
+      var el = e.target.closest(sel);
+      if (el && root.contains(el)) downs[e.pointerId] = el;
+    });
+    root.addEventListener('pointerup', function (e) {
+      var el = downs[e.pointerId];
+      delete downs[e.pointerId];
+      if (!el) return;
+      var at = document.elementFromPoint(e.clientX, e.clientY);
+      if (at && el.contains(at)) fn(el);
+    });
+    root.addEventListener('pointercancel', function (e) { delete downs[e.pointerId]; });
+  }
+
+  /* 置き方: short＝短い辺で向かい合う（既定）／long＝長い辺で向かい合う */
+  var PLACE_KEY = 'futari-place';
+  function getPlace() {
+    try { return localStorage.getItem(PLACE_KEY) === 'long' ? 'long' : 'short'; } catch (e) { return 'short'; }
+  }
+  function setPlace(p) {
+    try { localStorage.setItem(PLACE_KEY, p); } catch (e) { warn('store'); }
+    applyPlace(p);
+  }
+  function applyPlace(p) {
+    p = p || getPlace();
+    $('#futari').setAttribute('data-place', p);
+    $('#placeShort').setAttribute('aria-pressed', p === 'short' ? 'true' : 'false');
+    $('#placeLong').setAttribute('aria-pressed', p === 'long' ? 'true' : 'false');
+  }
+
+  var SG = { set: [], ans: null, found: 0, hint: 0, busy: false, timer: 0 };
+  function shuffle(a) {
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+  function setHintPic(ui, icon) {
+    var h = $('#sgHintPic');
+    if (ui) { h.setAttribute('data-ui', ui); h.removeAttribute('data-icon'); }
+    else { h.removeAttribute('data-ui'); h.setAttribute('data-icon', icon); }
+    fillIcons($('#sgHint'));
+  }
+  /* 1回: 28語から12語を選んで並べ、その中の1つが こたえ（前の回と同じ こたえは続けない） */
+  function sgRound() {
+    var prev = SG.ans;
+    SG.set = shuffle(K.SAGASU.slice()).slice(0, 12);
+    var cands = SG.set.filter(function (w) { return !prev || w[1] !== prev[1]; });
+    SG.ans = cands[Math.floor(Math.random() * cands.length)];
+    SG.hint = 0; SG.busy = false;
+    $('#sgWordText').textContent = SG.ans[0];
+    setHintPic('bulb');
+    $('#sgPics').innerHTML = SG.set.map(function (w) {
+      return '<button class="sg-pic" data-k="' + w[1] + '" data-say="' + w[0] + '" aria-label="' + w[0] + '">' +
+        '<span class="sg-img" data-icon="' + w[1] + '"></span></button>';
+    }).join('');
+    fillIcons($('#sgPics'));
+    $('#sgStamp').classList.remove('on');
+  }
+  function showFutari() {
+    stopTrace();
+    clearTimeout(SG.timer);
+    applyPlace();
+    SG.found = 0;                                   // 数えるのは その回だけ（§14）
+    $('#sgFound').textContent = '0';
+    sgRound();
+    show('futari');
+  }
+  onTap($('#futari'), '#sgWord', function () { speak(SG.ans[0]); });
+  onTap($('#futari'), '#sgHint', function () {
+    SG.hint++;
+    if (SG.hint === 1) setHintPic(null, SG.ans[1]);                       // 1回目: 兄の側に こたえの絵
+    else {                                                                // 2回目: 弟の側の こたえの絵に枠
+      var t = $('#sgPics').querySelector('[data-k="' + SG.ans[1] + '"]');
+      if (t) t.classList.add('glow');
+    }
+  });
+  onTap($('#futari'), '.sg-pic', function (el) {
+    if (SG.busy) return;
+    var name = el.getAttribute('data-say');
+    if (el.getAttribute('data-k') !== SG.ans[1]) { speak(name); return; }  // 外れても否定しない: 名前を言うだけ
+    SG.busy = true;
+    el.classList.add('hit');
+    SG.found++;
+    $('#sgFound').textContent = SG.found;
+    $('#sgStamp').classList.add('on');
+    speak(name + '！ みつけた！');
+    SG.timer = setTimeout(sgRound, 1500);
+  });
+  onTap($('#futari'), '#sgBack', home);
+
   /* ── 拡大させない・長押しのメニューを出さない（spec §8・R1） ── */
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
     document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false });
@@ -303,6 +401,9 @@
   $('#p1').addEventListener('click', onSay);
   $('#check').addEventListener('click', judge);
   $('#clear').addEventListener('click', clearInk);
+  $('#futariBtn').addEventListener('click', function () { go('futari'); });
+  $('#placeShort').addEventListener('click', function () { setPlace('short'); });
+  $('#placeLong').addEventListener('click', function () { setPlace('long'); });
   window.addEventListener('popstate', route);
 
   /* オフラインで開けるように（spec §8）。登録できなくても画面は動く */
@@ -316,6 +417,7 @@
   store.check();
   initVoice();
   renderWarns();
+  applyPlace();
   route();
   $('#boot').hidden = true;
   $('#fail').hidden = true;

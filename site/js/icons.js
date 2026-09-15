@@ -97,6 +97,8 @@ KIDS.ICONS = {
 };
 
 KIDS.UI = {
+  futari:'<circle cx="21" cy="19" r="10" fill="#3E87B8"/><path d="M7 57c0-11 6-21 14-21s14 10 14 21z" fill="#3E87B8"/><circle cx="45" cy="30" r="8" fill="#D55938"/><path d="M33 57c0-9 5-17 12-17s12 8 12 17z" fill="#D55938"/>',
+  bulb:'<path d="M32 6c-11 0-19 8-19 18 0 7 4 12 8 15 2 2 3 4 3 7h16c0-3 1-5 3-7 4-3 8-8 8-15 0-10-8-18-19-18z" fill="#F2C94C"/><path d="M26 30l6 6 6-6" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><rect x="24" y="48" width="16" height="5" rx="2" fill="#9AA6AD"/><rect x="26" y="55" width="12" height="4" rx="2" fill="#9AA6AD"/>',
   frame:'<rect x="7" y="11" width="50" height="42" rx="5" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="23" cy="25" r="5" fill="currentColor"/><path d="M12 48l13-13 9 9 7-7 11 11z" fill="currentColor"/>',
   card:'<rect x="11" y="7" width="42" height="50" rx="7" fill="none" stroke="currentColor" stroke-width="5"/><text x="32" y="43" text-anchor="middle" font-size="28" font-weight="900" fill="currentColor">あ</text>',
   finger:'<path d="M27 8c2.8 0 5 2.2 5 5v17l12.5 2.6c3.6.8 5.8 4.2 5.1 7.8l-2.1 11.2C46.7 56.5 43 60 38.4 60H30c-4 0-7.6-2.2-9.4-5.8L14.6 42c-1.2-2.4-.2-5.3 2.2-6.5 2-1 4.4-.5 5.8 1.2L22 37V13c0-2.8 2.2-5 5-5z" fill="currentColor"/>',

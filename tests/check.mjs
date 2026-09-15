@@ -37,6 +37,15 @@ ok(!unused.length, '使われない単語の絵が無い', unused.join(','));
 ok(Object.keys(K.YOMI).every((k) => keys.includes(k)), 'よみ のキーが字にある');
 ok(K.NOTE.wo && K.NOTE.n, 'を・ん の説明がある');
 
+/* ── ものさがし の語（spec §15） ── */
+const sg = K.SAGASU || [];
+ok(sg.length >= 12, 'ものさがし の語が12以上（1回に12枚並べる）', String(sg.length));
+const sgLong = sg.filter((w) => w[0].length < 2 || w[0].length > 3);
+ok(!sgLong.length, 'ものさがし の語は2〜3字', sgLong.map((w) => w[0]).join(','));
+const sgNoPic = sg.filter((w) => !K.ICONS[w[1]]);
+ok(!sgNoPic.length, 'ものさがし の絵が全部ある', sgNoPic.map((w) => w[1]).join(','));
+ok(new Set(sg.map((w) => w[1])).size === sg.length, 'ものさがし の語の重複なし');
+
 /* ── 2. 画面の規約（CLAUDE.md §4） ── */
 const walk = (d) => fs.readdirSync(d, { withFileTypes: true })
   .flatMap((e) => (e.isDirectory() ? walk(path.join(d, e.name)) : [path.join(d, e.name)]));

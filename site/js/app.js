@@ -545,7 +545,7 @@
   /* ── つなぐ ── */
   $('#goHyou').addEventListener('click', function () { go('hyou'); });
   $('#goSagasu').addEventListener('click', function () { go('sagasu'); });
-  $('#goTower').addEventListener('click', function () { go('tower'); });
+  /* 画面7 タワーへのカードは メニューから外した（spec §16）。URL の #tower では開ける */
   $('#help').addEventListener('click', function () { go('otona'); });
   $('#grid').addEventListener('click', function (e) {
     var b = e.target.closest('[data-key]');

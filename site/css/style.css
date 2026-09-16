@@ -97,9 +97,10 @@ button:active { transform: scale(.95); }
 
 /* ── 画面0 メニュー（spec §17）: 絵と色で選べる大きなカード3枚 ── */
 .menu { display: flex; flex-direction: column; gap: 16px; }
-.menu-cards { flex: 1; min-height: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+/* カードは 2枚でも 3枚でも 真ん中に並ぶ（タワーを外したので いまは2枚・spec §17） */
+.menu-cards { flex: 1; min-height: 0; display: flex; justify-content: center; gap: 20px; }
 .menu-card {
-  min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px;
+  flex: 0 1 320px; min-width: 0; min-height: 0; display: flex; flex-direction: column; align-items: center; gap: 12px; padding: 20px;
   border-radius: 28px; background: var(--plate); border: 3px solid var(--hue); box-shadow: var(--shadow);
 }
 .menu-pic {

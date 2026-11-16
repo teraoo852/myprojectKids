@@ -15,7 +15,7 @@
   }
   window.addEventListener('error', function (e) { fail(e.error || e.message); });
   window.addEventListener('unhandledrejection', function (e) { fail(e.reason); });
-  if (!K.ROWS || !K.ICONS || !K.UI || !K.TRACE || !K.SAGASU || !K.TSUMIKI || !K.BLOCKS) {
+  if (!K.ROWS || !K.ICONS || !K.UI || !K.TRACE || !K.SAGASU || !K.TSUMIKI || !K.BLOCKS || !K.IRO) {
     fail('data.js・icons.js・trace.js のどれかが読めない'); return;
   }
 
@@ -108,16 +108,17 @@
   }
 
   /* ── 画面の切り替えと URL（spec §4・§17） ──
-     URL: なし＝メニュー／#hyou＝表／#ka など＝字のページ／#otona＝画面5／#sagasu＝画面6／#tower＝画面7 */
-  var SCREENS = ['menu', 'chart', 'detail', 'otona', 'sagasu', 'tower'];
+     URL: なし＝メニュー／#hyou＝表／#ka など＝字のページ／#otona＝画面5／#sagasu＝画面6／#tower＝画面7／#oekaki＝画面8 */
+  var SCREENS = ['menu', 'chart', 'detail', 'otona', 'sagasu', 'tower', 'oekaki'];
   var cur = null;
   function show(name) {
     SCREENS.forEach(function (id) { $('#' + id).hidden = id !== name; });
   }
   function route() {
     var h = decodeURIComponent(location.hash.slice(1));
-    stopTrace(); stopDuo();
+    stopTrace(); stopDuo(); stopOekaki();
     if (h === 'hyou') showChart();
+    else if (h === 'oekaki') showOekaki();
     else if (h === 'otona') showHelp();
     else if (h === 'sagasu') showSagasu();
     else if (h === 'tower') showTower();
@@ -531,6 +532,162 @@
   onTap($('#tower'), '#twAgain', twReset);
   onTap($('#tower'), '#twBack', function () { up(''); });
 
+  /* ── 画面8 おえかき（spec §18） ── */
+  var OE_SIZES = [6, 16, 36];                       // 線の太さ（画面の px）
+  var OE_SIZE_NAMES = ['ほそい', 'ふつう', 'ふとい'];
+  var OE_HOLD = 2000, OE_ARM = 3000;                // 家の印を押し続ける長さ・「けす？」が出ている長さ
+  var OE = { ready: false, ctx: null, iro: 0, size: 1, eraser: false, pts: {}, holdTimer: 0, holdId: null, armed: false, armTimer: 0 };
+  var oeCanvas = $('#oeCanvas'), oeHome = $('#oeHome');
+
+  function oeBuildTools() {
+    $('#oeColors').innerHTML = K.IRO.map(function (c, i) {
+      return '<button class="oe-color" data-i="' + i + '" data-iro="' + c[0] + '" aria-label="' + c[1] + '" aria-pressed="false"></button>';
+    }).join('');
+    $('#oeSizes').innerHTML = OE_SIZES.map(function (s, i) {
+      return '<button class="oe-size" data-i="' + i + '" aria-label="' + OE_SIZE_NAMES[i] + '" aria-pressed="false">' +
+        '<span class="oe-dot" data-size="' + i + '"></span></button>';
+    }).join('');
+  }
+  function oeRenderTools() {
+    var cs = document.querySelectorAll('.oe-color'), ss = document.querySelectorAll('.oe-size'), i;
+    for (i = 0; i < cs.length; i++) cs[i].setAttribute('aria-pressed', !OE.eraser && i === OE.iro ? 'true' : 'false');
+    for (i = 0; i < ss.length; i++) ss[i].setAttribute('aria-pressed', i === OE.size ? 'true' : 'false');
+    $('#oeEraser').setAttribute('aria-pressed', OE.eraser ? 'true' : 'false');
+  }
+  /* 紙の大きさを画面に合わせる（描いた絵は残す）。縦向きのあいだは変えない（絵が切れないように） */
+  function oeFit() {
+    if (window.innerHeight > window.innerWidth) return;
+    var r = oeCanvas.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+    if (!w || !h || (OE.ready && oeCanvas.width === w && oeCanvas.height === h)) return;
+    var old = null;
+    if (OE.ready) {
+      old = document.createElement('canvas'); old.width = oeCanvas.width; old.height = oeCanvas.height;
+      old.getContext('2d').drawImage(oeCanvas, 0, 0);
+    }
+    oeCanvas.width = w; oeCanvas.height = h;
+    var c = oeCanvas.getContext('2d');
+    c.fillStyle = '#FFFFFF'; c.fillRect(0, 0, w, h);
+    if (old) c.drawImage(old, 0, 0);
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    c.lineCap = 'round'; c.lineJoin = 'round';
+    OE.ctx = c; OE.ready = true;
+  }
+  function showOekaki() {
+    show('oekaki');
+    oeFit();
+    oeRenderTools();
+  }
+  function stopOekaki() { oeHoldEnd(); oeDisarm(); OE.pts = {}; }
+
+  /* 描く: 指ごとに別の線（2人が同時に描ける） */
+  function oePos(e) {
+    var r = oeCanvas.getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  }
+  oeCanvas.addEventListener('pointerdown', function (e) {
+    if (!OE.ctx) return;
+    e.preventDefault();
+    try { oeCanvas.setPointerCapture(e.pointerId); } catch (x) { /* 取れなくても描ける */ }
+    oeDisarm();
+    var p = oePos(e), w = OE_SIZES[OE.size];
+    var st = OE.eraser ? { x: p[0], y: p[1], color: '#FFFFFF', width: Math.max(w * 2, 24) }
+                       : { x: p[0], y: p[1], color: K.IRO[OE.iro][2], width: w };
+    OE.pts[e.pointerId] = st;
+    OE.ctx.fillStyle = st.color;
+    OE.ctx.beginPath(); OE.ctx.arc(st.x, st.y, st.width / 2, 0, Math.PI * 2); OE.ctx.fill();
+  });
+  oeCanvas.addEventListener('pointermove', function (e) {
+    var st = OE.pts[e.pointerId];
+    if (!st) return;
+    e.preventDefault();
+    var list = e.getCoalescedEvents ? e.getCoalescedEvents() : null;
+    if (!list || !list.length) list = [e];
+    var c = OE.ctx;
+    c.strokeStyle = st.color; c.lineWidth = st.width;
+    c.beginPath(); c.moveTo(st.x, st.y);
+    for (var i = 0; i < list.length; i++) {
+      var p = oePos(list[i]);
+      c.lineTo(p[0], p[1]);
+      st.x = p[0]; st.y = p[1];
+    }
+    c.stroke();
+  });
+  function oeUp(e) { delete OE.pts[e.pointerId]; }
+  oeCanvas.addEventListener('pointerup', oeUp);
+  oeCanvas.addEventListener('pointercancel', oeUp);
+
+  /* 道具 */
+  onTap($('#oekaki'), '.oe-color', function (el) {
+    OE.iro = +el.getAttribute('data-i'); OE.eraser = false;
+    oeRenderTools();
+    speak(K.IRO[OE.iro][1]);
+  });
+  onTap($('#oekaki'), '#oeEraser', function () {
+    OE.eraser = true;
+    oeRenderTools();
+    speak('けしごむ');
+  });
+  onTap($('#oekaki'), '.oe-size', function (el) {
+    OE.size = +el.getAttribute('data-i');
+    oeRenderTools();
+    speak(OE_SIZE_NAMES[OE.size]);
+  });
+
+  /* ぜんぶ けす: 2回押し（1回目で「けす？」。3秒たつか、描き始めると元に戻る） */
+  function oeDisarm() {
+    clearTimeout(OE.armTimer);
+    OE.armed = false;
+    $('#oeClear').classList.remove('armed');
+    $('#oeClearText').textContent = 'ぜんぶ けす';
+  }
+  onTap($('#oekaki'), '#oeClear', function () {
+    if (!OE.armed) {
+      OE.armed = true;
+      $('#oeClear').classList.add('armed');
+      $('#oeClearText').textContent = 'けす？';
+      speak('ぜんぶ けす？ もういちど おしてね');
+      OE.armTimer = setTimeout(oeDisarm, OE_ARM);
+      return;
+    }
+    oeDisarm();
+    if (OE.ctx) {
+      OE.ctx.save();
+      OE.ctx.setTransform(1, 0, 0, 1, 0, 0);
+      OE.ctx.fillStyle = '#FFFFFF'; OE.ctx.fillRect(0, 0, oeCanvas.width, oeCanvas.height);
+      OE.ctx.restore();
+    }
+    speak('きれいに なったよ');
+  });
+
+  /* 家の印: 2秒 押し続けたときだけメニューへ（画面を移るボタンを置かない代わり） */
+  function oeHoldEnd() {
+    clearTimeout(OE.holdTimer);
+    OE.holdTimer = 0; OE.holdId = null;
+    oeHome.classList.remove('holding');
+  }
+  oeHome.addEventListener('pointerdown', function (e) {
+    if (OE.holdTimer) return;
+    e.preventDefault();
+    OE.holdId = e.pointerId;
+    oeHome.classList.add('holding');
+    OE.holdTimer = setTimeout(function () { oeHoldEnd(); up(''); }, OE_HOLD);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (t) {
+    oeHome.addEventListener(t, function (e) {
+      if (!OE.holdTimer || e.pointerId !== OE.holdId) return;
+      oeHoldEnd();                                         // 途中で離した: 戻らない
+      speak('もどるときは ながく おしてね');
+    });
+  });
+
+  /* この画面では、ページが動かない・拡大しない・端からのスワイプで前の画面に戻らない */
+  ['touchstart', 'touchmove'].forEach(function (t) {
+    $('#oekaki').addEventListener(t, function (e) { e.preventDefault(); }, { passive: false });
+  });
+  window.addEventListener('resize', function () { if (!$('#oekaki').hidden) oeFit(); });
+
   /* ── 拡大させない・長押しのメニューを出さない（spec §8・R1） ── */
   ['gesturestart', 'gesturechange', 'gestureend'].forEach(function (t) {
     document.addEventListener(t, function (e) { e.preventDefault(); }, { passive: false });
@@ -545,6 +702,7 @@
   /* ── つなぐ ── */
   $('#goHyou').addEventListener('click', function () { go('hyou'); });
   $('#goSagasu').addEventListener('click', function () { go('sagasu'); });
+  $('#goOekaki').addEventListener('click', function () { go('oekaki'); });
   /* 画面7 タワーへのカードは メニューから外した（spec §16）。URL の #tower では開ける */
   $('#help').addEventListener('click', function () { go('otona'); });
   $('#grid').addEventListener('click', function (e) {
@@ -573,6 +731,7 @@
     });
   }
 
+  oeBuildTools();
   fillIcons(document);
   store.check();
   initVoice();

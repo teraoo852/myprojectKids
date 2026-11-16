@@ -111,5 +111,11 @@ const colors = K.TSUMIKI_COLORS || [];
 const offRow = colors.filter((c) => !css.includes(c));
 ok(colors.length > 0 && !offRow.length, '積み木の色は行の色（style.css の --hue にある色）', offRow.join(','));
 
+/* ── 7. おえかき の色（spec §18） ── */
+const iro = K.IRO || [];
+ok(iro.length === 10 && new Set(iro.map((c) => c[0])).size === 10, 'おえかき の色は10色・キーの重複なし', String(iro.length));
+const iroOff = iro.filter((c) => !new RegExp(`\\[data-iro="${c[0]}"\\]\\s*\\{\\s*--iro:\\s*${c[2]};`, 'i').test(css));
+ok(!iroOff.length, 'おえかき の色が style.css の [data-iro] と同じ', iroOff.map((c) => c[0]).join(','));
+
 console.log(bad ? `\nNG ${bad} 件` : '\nすべて OK');
 process.exit(bad ? 1 : 0);

@@ -57,6 +57,11 @@
         <span class="menu-name">ものさがし</span>
         <span class="menu-tag"><span class="ico" data-ui="futari"></span>ふたりで</span>
       </button>
+      <button id="goOekaki" class="menu-card" data-row="2">
+        <span class="menu-pic" data-ui="oekaki"></span>
+        <span class="menu-name">おえかき</span>
+        <span class="menu-tag">じゆうに かこう</span>
+      </button>
       <!-- 「いっしょに タワー」のカードは 2026-09-16 に外した（遊びの要素が強すぎるため・一旦）。
            画面と仕組みは残してあり、URL の #tower で開ける。戻すときは このカードを戻すだけ（spec §16・§17） -->
     </div>
@@ -162,6 +167,18 @@
     <div id="twGhost" class="tw-ghost" hidden></div>
   </section>
 
+  <!-- 画面8 おえかき（spec §18）。画面を移るボタンは置かない（家の印を2秒 長押ししたときだけメニューへ） -->
+  <section id="oekaki" class="screen oekaki" hidden>
+    <div class="oe-tools">
+      <button id="oeHome" class="oe-home" aria-label="メニューに もどる（ながく おす）"><span class="ico" data-ui="home"></span></button>
+      <div id="oeColors" class="oe-colors" role="group" aria-label="いろ"></div>
+      <button id="oeEraser" class="oe-btn" aria-pressed="false"><span class="ico" data-icon="keshigomu"></span>けしごむ</button>
+      <div id="oeSizes" class="oe-sizes" role="group" aria-label="せんの ふとさ"></div>
+      <button id="oeClear" class="oe-btn oe-clear"><span class="ico" data-ui="trash"></span><span id="oeClearText">ぜんぶ けす</span></button>
+    </div>
+    <div class="oe-paper"><canvas id="oeCanvas" class="oe-canvas"></canvas></div>
+  </section>
+
   <!-- 画面5 おとなの ひとへ（spec §13） -->
   <section id="otona" class="screen adult" hidden>
     <div class="inner">
@@ -201,6 +218,14 @@
         <button id="placeShort" class="place-btn" aria-pressed="true">短い辺で向かい合う（左が おにいちゃん）</button>
         <button id="placeLong" class="place-btn" aria-pressed="false">長い辺で向かい合う（上が おにいちゃん）</button>
       </div>
+
+      <h2>おえかき</h2>
+      <ul>
+        <li>指で自由に描けます。ふたりで同時に描けます。色・けしごむ・線の太さ・ぜんぶ けす だけの画面です。</li>
+        <li><strong>メニューに戻るには、左上の小さな家の印を2秒 押し続けてください。</strong>子どもが うっかり別の画面に移らないように、ほかに画面を移るボタンはありません。</li>
+        <li>「ぜんぶ けす」は2回押すと消えます（1回目で「けす？」に変わります）。</li>
+        <li>絵は保存しません。メニューに戻っても残りますが、アプリを閉じると消えます。</li>
+      </ul>
 
       <h2>こどもが つかうとき</h2>
       <ul>

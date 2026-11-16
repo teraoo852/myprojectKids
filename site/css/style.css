@@ -366,9 +366,68 @@ button:active { transform: scale(.95); }
 .duo[data-place="short"] .tw-ghost { transform: translate(-50%, -50%) rotate(90deg); }
 .duo[data-place="long"] .tw-ghost { transform: translate(-50%, -50%) rotate(180deg); }
 
+/* ── 画面8 おえかき（spec §18）: 左に道具の列、残り全部が紙 ── */
+.oekaki { display: flex; gap: 14px; touch-action: none; }
+.oe-tools { width: 156px; flex: none; display: flex; flex-direction: column; gap: 10px; }
+/* 家の印: 2秒 押し続けたときだけメニューへ。押しているあいだ、中が左から塗られていく */
+.oe-home {
+  position: relative; overflow: hidden; align-self: flex-start; flex: none; width: 56px; height: 44px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; background: var(--plate); border: 2px solid var(--rule); color: var(--ink-soft); opacity: .75;
+}
+.oe-home .ico { position: relative; z-index: 1; width: 26px; height: 26px; }
+.oe-home::after {
+  content: ""; position: absolute; top: 0; right: 0; bottom: 0; left: 0;
+  background: var(--accent-soft); transform: scaleX(0); transform-origin: left center;
+}
+.oe-home.holding::after { transform: scaleX(1); transition: transform 2s linear; }
+
+/* 色: style.css と data.js（KIDS.IRO）で同じにする（tests/check.mjs が照らし合わせる） */
+[data-iro="kuro"]     { --iro: #2B2B2B; }
+[data-iro="aka"]      { --iro: #E5484D; }
+[data-iro="daidai"]   { --iro: #F08A24; }
+[data-iro="kiiro"]    { --iro: #F5D020; }
+[data-iro="midori"]   { --iro: #3FA34D; }
+[data-iro="mizuiro"]  { --iro: #5BC0EB; }
+[data-iro="ao"]       { --iro: #2F7DD1; }
+[data-iro="murasaki"] { --iro: #8E5BC4; }
+[data-iro="pinku"]    { --iro: #F27BA9; }
+[data-iro="chairo"]   { --iro: #8B5A2B; }
+.oe-colors { display: grid; grid-template-columns: repeat(2, 64px); justify-content: space-around; gap: 8px; }
+.oe-color {
+  width: 64px; height: 64px; border-radius: 50%; background: var(--iro);
+  border: 3px solid var(--plate); box-shadow: 0 0 0 2px var(--rule);
+}
+/* 選ばれている物には太い黒い輪（色だけで伝えない） */
+.oe-color[aria-pressed="true"] { box-shadow: 0 0 0 5px var(--ink); transform: scale(.86); }
+.oe-btn {
+  flex: none; height: 60px; display: flex; align-items: center; justify-content: center; gap: 6px;
+  border-radius: 16px; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow);
+  font-size: 20px; color: var(--ink);
+}
+.oe-btn .ico { width: 34px; height: 34px; }
+.oe-btn[aria-pressed="true"], .oe-size[aria-pressed="true"] { border: 5px solid var(--ink); }
+.oe-sizes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.oe-size {
+  height: 56px; display: flex; align-items: center; justify-content: center;
+  border-radius: 14px; background: var(--plate); border: 2px solid var(--rule);
+}
+.oe-dot { display: block; border-radius: 50%; background: var(--ink); }
+.oe-dot[data-size="0"] { width: 8px; height: 8px; }
+.oe-dot[data-size="1"] { width: 18px; height: 18px; }
+.oe-dot[data-size="2"] { width: 34px; height: 34px; }
+/* ぜんぶ けす: ほかの道具から離して いちばん下。1回目で朱色の「けす？」になる */
+.oe-clear { margin-top: auto; height: 80px; flex-direction: column; gap: 2px; color: var(--ink-soft); }
+.oe-clear.armed { background: var(--accent); border-color: var(--accent); color: #FFFFFF; }
+.oe-paper {
+  flex: 1; min-width: 0; position: relative; overflow: hidden;
+  border-radius: 20px; background: #FFFFFF; border: 3px solid var(--rule); box-shadow: var(--shadow);
+}
+.oe-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+
 /* 動きを減らす設定のとき: 縮む・ふわっと出る をやめ、押したら少し暗くするだけにする */
 @media (prefers-reduced-motion: reduce) {
-  button, .maru, .duo-stamp { transition: none; }
+  button, .maru, .duo-stamp, .oe-home.holding::after { transition: none; }
   button:active { transform: none; filter: brightness(.9); }
   .tw-pop { animation: none; }
 }

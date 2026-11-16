@@ -30,6 +30,14 @@ KIDS.SAGASU = [
 /* いっしょに タワー の積み木（spec §16）: [形のキー, 名前（弟が押したときに読む）]。絵は icons.js の BLOCKS */
 KIDS.TSUMIKI = [['cube','しかく'],['plank','ながい いた'],['roof','さんかく'],['log','まるた'],['arch','アーチ']];
 
+/* おえかき の色（spec §18）: [キー, 名前（押したときに読む）, 色]。
+ * 色は style.css の [data-iro] と同じにする（tests/check.mjs が照らし合わせる） */
+KIDS.IRO = [
+  ['kuro','くろ','#2B2B2B'],['aka','あか','#E5484D'],['daidai','だいだい','#F08A24'],['kiiro','きいろ','#F5D020'],
+  ['midori','みどり','#3FA34D'],['mizuiro','みずいろ','#5BC0EB'],['ao','あお','#2F7DD1'],['murasaki','むらさき','#8E5BC4'],
+  ['pinku','ピンク','#F27BA9'],['chairo','ちゃいろ','#8B5A2B']
+];
+
 /* を・ん の説明（spec §5）。strong は太字にする部分、example は を の例文カード */
 KIDS.NOTE = {
   wo: { text: '「を」は ことばの あいだで つかう もじだよ', strong: '', example: ['ほんを よむ', 'hon'] },

@@ -97,6 +97,8 @@ KIDS.ICONS = {
 };
 
 KIDS.UI = {
+  oekaki:'<path d="M7 50c6-11 10 6 16-4s9 7 15-2 9 4 14-1" fill="none" stroke="#D8536D" stroke-width="5" stroke-linecap="round"/><g transform="rotate(-42 38 22)"><rect x="24" y="15" width="34" height="14" rx="3" fill="#648C45"/><rect x="45" y="15" width="5" height="14" fill="#4C6F33"/><path d="M24 15v14l-12-7z" fill="#F2DDB0"/><path d="M17 19.2v5.6l-5-2.8z" fill="#648C45"/></g><circle cx="50" cy="12" r="6" fill="#F5D020"/>',
+  trash:'<rect x="10" y="11" width="44" height="7" rx="3.5" fill="currentColor"/><rect x="25" y="5" width="14" height="8" rx="3" fill="currentColor"/><path d="M14 21h36l-3 33a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4z" fill="currentColor"/><path d="M26 29v21M38 29v21" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity=".7"/>',
   home:'<path d="M32 7L5 30h8v25h14V41h10v14h14V30h8z" fill="currentColor"/>',
   sagasu:'<circle cx="26" cy="26" r="18" fill="#FFFFFF" stroke="#3E87B8" stroke-width="6"/><path d="M40 40l15 15" stroke="#3E87B8" stroke-width="9" stroke-linecap="round"/><path d="M33 26c0 4.5-4.5 8-10 8s-9-3.5-9-8 3.5-8 9-8 10 3.5 10 8z" fill="#6FA8CE"/><path d="M32 26l6-5v10z" fill="#4E88B0"/><circle cx="19" cy="24" r="1.8" fill="#25313A"/>',
   tower:'<rect x="6" y="56" width="52" height="5" rx="2.5" fill="#648C45"/><rect x="12" y="44" width="40" height="12" rx="3" fill="#3E87B8"/><rect x="19" y="32" width="26" height="12" rx="3" fill="#A57A1C"/><path d="M32 16L46 32H18z" fill="#D8536D"/><path d="M32 4v13" stroke="#25313A" stroke-width="2.4"/><path d="M33 4h12l-3 4 3 4H33z" fill="#D9503A"/>',

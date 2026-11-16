@@ -170,13 +170,18 @@
   <!-- 画面8 おえかき（spec §18）。画面を移るボタンは置かない（家の印を2秒 長押ししたときだけメニューへ） -->
   <section id="oekaki" class="screen oekaki" hidden>
     <div class="oe-tools">
-      <button id="oeHome" class="oe-home" aria-label="メニューに もどる（ながく おす）"><span class="ico" data-ui="home"></span></button>
+      <div class="oe-top">
+        <button id="oeHome" class="oe-home" aria-label="メニューに もどる（ながく おす）"><span class="ico" data-ui="home"></span></button>
+        <button id="oeClose" class="oe-toggle" aria-label="どうぐを とじる"><span class="ico" data-ui="chevron"></span></button>
+      </div>
       <div id="oeColors" class="oe-colors" role="group" aria-label="いろ"></div>
       <button id="oeEraser" class="oe-btn" aria-pressed="false"><span class="ico" data-icon="keshigomu"></span>けしごむ</button>
       <div id="oeSizes" class="oe-sizes" role="group" aria-label="せんの ふとさ"></div>
       <button id="oeClear" class="oe-btn oe-clear"><span class="ico" data-ui="trash"></span><span id="oeClearText">ぜんぶ けす</span></button>
     </div>
     <div class="oe-paper"><canvas id="oeCanvas" class="oe-canvas"></canvas></div>
+    <!-- 道具を閉じているあいだだけ出る（押すと道具が戻る） -->
+    <button id="oeOpen" class="oe-open" aria-label="どうぐを ひらく" hidden><span class="ico" data-ui="palette"></span></button>
   </section>
 
   <!-- 画面5 おとなの ひとへ（spec §13） -->
@@ -223,6 +228,7 @@
       <ul>
         <li>指で自由に描けます。ふたりで同時に描けます。色・けしごむ・線の太さ・ぜんぶ けす だけの画面です。</li>
         <li><strong>メニューに戻るには、左上の小さな家の印を2秒 押し続けてください。</strong>子どもが うっかり別の画面に移らないように、ほかに画面を移るボタンはありません。</li>
+        <li>家の印の右の矢印を押すと、道具が閉じて紙が画面いっぱいになります。左上のパレットのボタンで戻ります。閉じているあいだは、描くことだけができます。</li>
         <li>「ぜんぶ けす」は2回押すと消えます（1回目で「けす？」に変わります）。</li>
         <li>絵は保存しません。メニューに戻っても残りますが、アプリを閉じると消えます。</li>
       </ul>

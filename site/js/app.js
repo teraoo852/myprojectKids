@@ -587,6 +587,7 @@
     return [e.clientX - r.left, e.clientY - r.top];
   }
   oeCanvas.addEventListener('pointerdown', function (e) {
+    if (!OE.ctx) oeFit();                                  // 紙の準備がまだなら、ここで整える
     if (!OE.ctx) return;
     e.preventDefault();
     try { oeCanvas.setPointerCapture(e.pointerId); } catch (x) { /* 取れなくても描ける */ }
@@ -634,6 +635,15 @@
     oeRenderTools();
     speak(OE_SIZE_NAMES[OE.size]);
   });
+
+  /* 道具を閉じる・開く（紙の大きさは変わらないので、絵はそのまま） */
+  function oeSetClosed(closed) {
+    oeHoldEnd(); oeDisarm();
+    $('#oekaki').classList.toggle('closed', closed);
+    $('#oeOpen').hidden = !closed;
+  }
+  onTap($('#oekaki'), '#oeClose', function () { oeSetClosed(true); });
+  onTap($('#oekaki'), '#oeOpen', function () { oeSetClosed(false); });
 
   /* ぜんぶ けす: 2回押し（1回目で「けす？」。3秒たつか、描き始めると元に戻る） */
   function oeDisarm() {
@@ -737,8 +747,9 @@
   initVoice();
   renderWarns();
   applyPlace();
-  route();
+  /* 先に画面を出してから行き先を決める（隠れたままだと、おえかき の紙の大きさを測れない） */
   $('#boot').hidden = true;
   $('#fail').hidden = true;
   $('#app').hidden = false;
+  route();
 })();

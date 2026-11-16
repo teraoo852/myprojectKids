@@ -97,6 +97,8 @@ KIDS.ICONS = {
 };
 
 KIDS.UI = {
+  chevron:'<path d="M40 12L20 32l20 20" fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>',
+  palette:'<path d="M32 8C17 8 6 18 6 31c0 12 10 21 22 21 4 0 6-2 6-5 0-2-1-3-1-5 0-3 2-5 5-5h7c8 0 13-5 13-12C58 15 47 8 32 8z" fill="#F2DDB0" stroke="#A9724C" stroke-width="2.5"/><circle cx="20" cy="26" r="4.5" fill="#E5484D"/><circle cx="31" cy="19" r="4.5" fill="#F5D020"/><circle cx="44" cy="22" r="4.5" fill="#2F7DD1"/><circle cx="18" cy="39" r="4.5" fill="#3FA34D"/>',
   oekaki:'<path d="M7 50c6-11 10 6 16-4s9 7 15-2 9 4 14-1" fill="none" stroke="#D8536D" stroke-width="5" stroke-linecap="round"/><g transform="rotate(-42 38 22)"><rect x="24" y="15" width="34" height="14" rx="3" fill="#648C45"/><rect x="45" y="15" width="5" height="14" fill="#4C6F33"/><path d="M24 15v14l-12-7z" fill="#F2DDB0"/><path d="M17 19.2v5.6l-5-2.8z" fill="#648C45"/></g><circle cx="50" cy="12" r="6" fill="#F5D020"/>',
   trash:'<rect x="10" y="11" width="44" height="7" rx="3.5" fill="currentColor"/><rect x="25" y="5" width="14" height="8" rx="3" fill="currentColor"/><path d="M14 21h36l-3 33a4 4 0 0 1-4 4H21a4 4 0 0 1-4-4z" fill="currentColor"/><path d="M26 29v21M38 29v21" stroke="#FFFFFF" stroke-width="3.4" stroke-linecap="round" opacity=".7"/>',
   home:'<path d="M32 7L5 30h8v25h14V41h10v14h14V30h8z" fill="currentColor"/>',

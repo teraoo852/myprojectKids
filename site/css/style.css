@@ -367,11 +367,25 @@ button:active { transform: scale(.95); }
 .duo[data-place="long"] .tw-ghost { transform: translate(-50%, -50%) rotate(180deg); }
 
 /* ── 画面8 おえかき（spec §18）: 左に道具の列、残り全部が紙 ── */
-.oekaki { display: flex; gap: 14px; touch-action: none; }
+.oekaki { position: relative; display: flex; gap: 14px; touch-action: none; }
 .oe-tools { width: 156px; flex: none; display: flex; flex-direction: column; gap: 10px; }
+/* 道具を閉じる: 列を消して紙を画面いっぱいに。閉じているあいだはパレットのボタンだけ出す */
+.oekaki.closed .oe-tools { display: none; }
+.oe-top { flex: none; display: flex; justify-content: space-between; }
+.oe-toggle {
+  width: 56px; height: 44px; display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; background: var(--plate); border: 2px solid var(--rule); color: var(--ink-soft);
+}
+.oe-toggle .ico { width: 26px; height: 26px; }
+.oe-open {
+  position: absolute; top: 10px; left: 10px; z-index: 2; width: 56px; height: 56px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--plate); border: 2px solid var(--rule); box-shadow: var(--shadow); opacity: .9;
+}
+.oe-open .ico { width: 36px; height: 36px; }
 /* 家の印: 2秒 押し続けたときだけメニューへ。押しているあいだ、中が左から塗られていく */
 .oe-home {
-  position: relative; overflow: hidden; align-self: flex-start; flex: none; width: 56px; height: 44px;
+  position: relative; overflow: hidden; flex: none; width: 56px; height: 44px;
   display: flex; align-items: center; justify-content: center;
   border-radius: 12px; background: var(--plate); border: 2px solid var(--rule); color: var(--ink-soft); opacity: .75;
 }
@@ -423,7 +437,9 @@ button:active { transform: scale(.95); }
   flex: 1; min-width: 0; position: relative; overflow: hidden;
   border-radius: 20px; background: #FFFFFF; border: 3px solid var(--rule); box-shadow: var(--shadow);
 }
-.oe-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block; touch-action: none; }
+/* 紙はいつも画面いっぱいの大きさ（画面の幅 − 余白 16×2 − 枠 3×2）で、右に寄せる。
+   道具が開いているあいだは左端が隠れるだけなので、開け閉めしても絵がずれない・切れない */
+.oe-canvas { position: absolute; top: 0; right: 0; width: calc(100vw - 38px); height: 100%; display: block; touch-action: none; }
 
 /* 動きを減らす設定のとき: 縮む・ふわっと出る をやめ、押したら少し暗くするだけにする */
 @media (prefers-reduced-motion: reduce) {
